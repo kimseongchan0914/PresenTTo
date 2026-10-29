@@ -23,5 +23,14 @@ public class GiftRecommender {
                 new String[]{"어버이날", "생일"},
                 new String[]{"부모님"}));
 
+        // ===== 일반 선물 (Gift) =====
+        gifts.add(new Gift("빼빼로 여러 맛 세트", 6000, "여러 맛을 골라 담은 기본 선물",
+                new String[]{"빼빼로데이"}, new String[]{"친구", "형제자매"}));
+        gifts.add(new Gift("빼빼로 만들기 키트", 9000, "직접 만들어 주면 정성이 두 배!",
+                new String[]{"빼빼로데이"}, new String[]{"친구", "형제자매"}));
+        gifts.add(new Gift("편의점 기프티콘", 5000, "메신저로 바로 보낼 수 있는 부담 없는 선물",
+                new String[]{"생일", "빼빼로데이"}, new String[]{"친구", "형제자매"}));
+        gifts.add(new Gift("카페 음료 쿠폰", 9500, "좋아하는 카페에서 쉬어 가라는 의미를 담아서",
+                new String[]{"생일", "빼빼로데이"}, new String[]{"친구", "형제자매"}));
     }
 }
