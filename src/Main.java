@@ -215,6 +215,40 @@ public class Main extends JFrame implements ActionListener {
         return card;
     }
 
+    // ==================== 버튼 클릭 처리 ====================
+
+    /** 버튼을 눌렀을 때 실행 (ActionListener 인터페이스의 메소드) */
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // 선택된 칩 찾기
+        Anniversary anniversary = anniversaries[selectedIndex(occasionChips)];
+        String target = TARGETS[selectedIndex(targetChips)];
+        int budget = selectedIndex(budgetChips);
+
+        ArrayList<Gift> gifts = recommender.recommend(anniversary, target, BUDGET_MAX[budget]);
+
+        // 선택한 조건과 응원 문구 보여주기
+        conditionLabel.setText(target + "에게 주는 " + anniversary.getName() + " 선물  ·  " + BUDGET_NAMES[budget]);
+        String message = anniversary.getMessage();   // 다형성: 기념일마다 다른 문구가 나옴
+        if (target.equals("선생님")) {
+            message = "청탁금지법 때문에 선생님께는 물건 대신 마음 선물을 추천해요.";
+        }
+        if (gifts.isEmpty()) {
+            message = "조건에 맞는 선물이 없어요. 예산을 늘려 보세요!";
+        }
+        messageLabel.setText(message);
+
+        // 선물 카드 다시 채우기
+        cardPanel.removeAll();
+        for (int i = 0; i < gifts.size(); i++) {
+            cardPanel.add(makeGiftCard(gifts.get(i), i + 1));
+        }
+        cardPanel.revalidate();   // 바뀐 화면 다시 그리기
+        cardPanel.repaint();
+
+        againButton.setEnabled(true);
+    }
+
     /** 칩 배열에서 선택된 칩의 번호 찾기 */
     private int selectedIndex(Chip[] chips) {
         for (int i = 0; i < chips.length; i++) {
