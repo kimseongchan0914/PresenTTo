@@ -124,6 +124,27 @@ public class Main extends JFrame implements ActionListener {
         return row;
     }
 
+    /** 결과가 나오는 부분 (조건 + 응원 문구 + 선물 카드) */
+    private JPanel makeResultArea() {
+        conditionLabel.setFont(new Font(FONT, Font.BOLD, 18));
+        conditionLabel.setForeground(TEXT);
+        messageLabel.setFont(new Font(FONT, Font.PLAIN, 14));
+        messageLabel.setForeground(GRAY);
+
+        JPanel textPanel = new JPanel(new GridLayout(2, 1, 0, 2));
+        textPanel.setOpaque(false);
+        textPanel.add(conditionLabel);
+        textPanel.add(messageLabel);
+
+        cardPanel.setOpaque(false);
+
+        JPanel result = new JPanel(new BorderLayout(0, 14));
+        result.setOpaque(false);
+        result.add(textPanel, BorderLayout.NORTH);
+        result.add(cardPanel, BorderLayout.CENTER);
+        return result;
+    }
+
     /** 프로그램 시작점 */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Main().setVisible(true));
