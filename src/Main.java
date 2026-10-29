@@ -145,6 +145,18 @@ public class Main extends JFrame implements ActionListener {
         return result;
     }
 
+    /** 아직 추천받기 전 화면 */
+    private void showEmpty() {
+        conditionLabel.setText("어떤 선물이 좋을까요?");
+        messageLabel.setText("위에서 조건을 고르고 [선물 추천받기]를 눌러 보세요.");
+        for (int i = 0; i < 3; i++) {
+            RoundPanel card = new RoundPanel(new Color(255, 255, 255, 150), 20, false);
+            card.setLayout(new BorderLayout());
+            card.add(new GiftIcon(new Color(240, 225, 215), 56), BorderLayout.CENTER);
+            cardPanel.add(card);
+        }
+    }
+
     /** 프로그램 시작점 */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Main().setVisible(true));
