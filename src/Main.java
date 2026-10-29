@@ -72,4 +72,41 @@ public class Main extends JFrame implements ActionListener {
         }
     }
 
+    /** 둥근 버튼 (JButton 상속) - 마우스를 올리면 색이 바뀜 */
+    static class RoundButton extends JButton {
+        private Color normal, hover, text;
+        private boolean mouseOver = false;
+
+        RoundButton(String label, Color normal, Color hover, Color text) {
+            super(label);
+            this.normal = normal;
+            this.hover = hover;
+            this.text = text;
+            setFont(new Font(FONT, Font.BOLD, 15));
+            setForeground(text);
+            setPreferredSize(new Dimension(160, 46));
+            setContentAreaFilled(false);
+            setBorderPainted(false);
+            setFocusPainted(false);
+            setCursor(new Cursor(Cursor.HAND_CURSOR));
+            addMouseListener(new MouseAdapter() {
+                public void mouseEntered(MouseEvent e) { mouseOver = true; repaint(); }
+                public void mouseExited(MouseEvent e) { mouseOver = false; repaint(); }
+            });
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            setForeground(isEnabled() ? text : new Color(200, 190, 185));
+            g2.setColor(mouseOver && isEnabled() ? hover : normal);
+            g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 24, 24);
+            g2.setColor(isEnabled() ? ACCENT : LINE);
+            g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 24, 24);
+            g2.dispose();
+            super.paintComponent(g);
+        }
+    }
+
 }
