@@ -61,4 +61,38 @@ public class GiftRecommender {
         gifts.add(new Gift("가족 외식", 80000, "온 가족이 함께하는 맛있는 한 끼",
                 new String[]{"어버이날"}, new String[]{"부모님"}));
     }
+
+    /**
+     * 조건에 맞는 선물을 최대 3개 골라 줍니다.
+     * 1순위: 기념일 + 받는 사람 + 예산이 모두 맞는 선물
+     * 2순위: 1순위가 3개보다 적으면 받는 사람 + 예산만 맞는 선물로 채움
+     */
+    public ArrayList<Gift> recommend(Anniversary anniversary, String target, int maxPrice) {
+        ArrayList<Gift> best = new ArrayList<>();
+        ArrayList<Gift> others = new ArrayList<>();
+
+        for (Gift g : gifts) {
+            if (g.getPrice() > maxPrice || !g.fitsTarget(target)) {
+                continue;   // 예산 초과이거나 받는 사람이 안 맞으면 건너뜀
+            }
+            if (g.fitsOccasion(anniversary.getName())) {
+                best.add(g);
+            } else {
+                others.add(g);
+            }
+        }
+
+        // 섞어서 누를 때마다 다른 선물이 나오게 함
+        Collections.shuffle(best);
+        Collections.shuffle(others);
+
+        ArrayList<Gift> result = new ArrayList<>(best);
+        result.addAll(others);
+
+        // 앞에서부터 3개만 남기기
+        while (result.size() > 3) {
+            result.remove(result.size() - 1);
+        }
+        return result;
+    }
 }
