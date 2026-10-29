@@ -42,3 +42,15 @@ class Christmas extends Anniversary {
     }
 }
 
+/** 어버이날 */
+class ParentsDay extends Anniversary {
+    public ParentsDay() {
+        super("어버이날");
+    }
+
+    @Override
+    public String getMessage() {
+        return "비싼 선물보다 \"감사합니다\" 한마디가 가장 큰 선물이에요.";
+    }
+}
+
