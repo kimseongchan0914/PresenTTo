@@ -34,4 +34,42 @@ public class Main extends JFrame implements ActionListener {
     static final Color LINE = new Color(238, 228, 220);        // 테두리
     static final String FONT = "Apple SD Gothic Neo";          // 맥 한글 글꼴
 
+    // ==================== 화면 꾸미기용 부품 클래스 ====================
+
+    /** 둥근 모서리 패널 (JPanel 상속) - shadow가 true면 은은한 그림자도 그림 */
+    static class RoundPanel extends JPanel {
+        private Color fill;
+        private int radius;
+        private boolean shadow;
+
+        RoundPanel(Color fill, int radius, boolean shadow) {
+            this.fill = fill;
+            this.radius = radius;
+            this.shadow = shadow;
+            setOpaque(false);
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            int w = getWidth() - 4;
+            int h = getHeight() - 5;
+            if (shadow) {   // 아래로 살짝 퍼지는 그림자
+                for (int i = 1; i <= 4; i++) {
+                    g2.setColor(new Color(150, 90, 70, 10));
+                    g2.fillRoundRect(2, 1 + i, w, h, radius + i, radius + i);
+                }
+            }
+            g2.setColor(fill);
+            g2.fillRoundRect(2, 0, w, h, radius, radius);
+            if (shadow) {
+                g2.setColor(LINE);
+                g2.drawRoundRect(2, 0, w, h, radius, radius);
+            }
+            g2.dispose();
+            super.paintComponent(g);
+        }
+    }
+
 }
