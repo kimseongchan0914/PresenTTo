@@ -157,6 +157,64 @@ public class Main extends JFrame implements ActionListener {
         }
     }
 
+    /** 선물 한 개를 보여주는 카드 만들기 */
+    private JPanel makeGiftCard(Gift gift, int number) {
+        boolean handmade = gift instanceof HandmadeGift;   // 마음 선물이면 초록색으로
+        Color main = handmade ? GREEN : ACCENT;
+        Color light = handmade ? GREEN_LIGHT : ACCENT_LIGHT;
+
+        // 위쪽: 태그 + 선물 아이콘
+        JLabel tag = new JLabel(handmade ? "마음 선물" : "추천 " + number);
+        tag.setFont(new Font(FONT, Font.BOLD, 12));
+        tag.setForeground(main);
+        RoundPanel tagBox = new RoundPanel(light, 14, false);
+        tagBox.setBorder(new EmptyBorder(4, 10, 4, 10));
+        tagBox.add(tag);
+
+        JPanel tagLine = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        tagLine.setOpaque(false);
+        tagLine.add(tagBox);
+
+        JPanel top = new JPanel(new BorderLayout());
+        top.setOpaque(false);
+        top.add(tagLine, BorderLayout.WEST);
+        top.add(new GiftIcon(main, 40), BorderLayout.EAST);
+
+        // 가운데: 이름 + 가격
+        JLabel nameLabel = new JLabel("<html>" + gift.getName() + "</html>");
+        nameLabel.setFont(new Font(FONT, Font.BOLD, 19));
+        nameLabel.setForeground(TEXT);
+
+        JLabel priceLabel = new JLabel(gift.getPriceText());   // 다형성: 마음 선물은 가격이 다르게 나옴
+        priceLabel.setFont(new Font(FONT, Font.BOLD, 16));
+        priceLabel.setForeground(main);
+
+        JPanel middle = new JPanel(new GridLayout(2, 1, 0, 4));
+        middle.setOpaque(false);
+        middle.add(nameLabel);
+        middle.add(priceLabel);
+
+        // 아래: 설명 (html을 쓰면 자동 줄바꿈)
+        JLabel descLabel = new JLabel("<html><div style='line-height:1.4'>" + gift.getDescription() + "</div></html>");
+        descLabel.setFont(new Font(FONT, Font.PLAIN, 13));
+        descLabel.setForeground(GRAY);
+        descLabel.setVerticalAlignment(SwingConstants.TOP);
+        descLabel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(1, 0, 0, 0, LINE), new EmptyBorder(12, 0, 0, 0)));
+
+        JPanel info = new JPanel(new BorderLayout(0, 14));
+        info.setOpaque(false);
+        info.add(middle, BorderLayout.NORTH);
+        info.add(descLabel, BorderLayout.CENTER);
+
+        RoundPanel card = new RoundPanel(Color.WHITE, 20, true);
+        card.setLayout(new BorderLayout(0, 16));
+        card.setBorder(new EmptyBorder(18, 18, 18, 18));
+        card.add(top, BorderLayout.NORTH);
+        card.add(info, BorderLayout.CENTER);
+        return card;
+    }
+
     /** 프로그램 시작점 */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Main().setVisible(true));
