@@ -20,4 +20,24 @@ public class Gift {
         this.targets = targets;
     }
 
+    /** 이 선물이 해당 기념일에 어울리는지 확인 */
+    public boolean fitsOccasion(String occasion) {
+        for (String o : occasions) {
+            if (o.equals(occasion)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** 이 선물이 해당 받는 사람에게 어울리는지 확인 */
+    public boolean fitsTarget(String target) {
+        for (String t : targets) {
+            if (t.equals(target)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
