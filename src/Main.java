@@ -109,4 +109,40 @@ public class Main extends JFrame implements ActionListener {
         }
     }
 
+    /** 선택 칩 (JToggleButton 상속) - 선택되면 빨간색으로 채워짐 */
+    static class Chip extends JToggleButton {
+        Chip(String label) {
+            super(label);
+            setFont(new Font(FONT, Font.PLAIN, 14));
+            setForeground(TEXT);
+            setPreferredSize(new Dimension(getPreferredSize().width + 16, 36));
+            setContentAreaFilled(false);
+            setBorderPainted(false);
+            setFocusPainted(false);
+            setCursor(new Cursor(Cursor.HAND_CURSOR));
+            addItemListener(e -> {   // 선택 상태에 따라 글자색 / 굵기 변경
+                setForeground(isSelected() ? Color.WHITE : TEXT);
+                setFont(new Font(FONT, isSelected() ? Font.BOLD : Font.PLAIN, 14));
+            });
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            int h = getHeight() - 1;
+            if (isSelected()) {
+                g2.setColor(ACCENT);
+                g2.fillRoundRect(0, 0, getWidth() - 1, h, h, h);
+            } else {
+                g2.setColor(getModel().isRollover() ? ACCENT_LIGHT : BG);
+                g2.fillRoundRect(0, 0, getWidth() - 1, h, h, h);
+                g2.setColor(LINE);
+                g2.drawRoundRect(0, 0, getWidth() - 1, h, h, h);
+            }
+            g2.dispose();
+            super.paintComponent(g);
+        }
+    }
+
 }
