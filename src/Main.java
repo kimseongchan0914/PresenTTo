@@ -68,6 +68,38 @@ public class Main extends JFrame implements ActionListener {
         showEmpty();
     }
 
+    // ==================== 화면 만들기 ====================
+
+    /** 조건 고르는 흰색 상자 (기념일 / 받는 사람 / 예산 + 버튼) */
+    private JPanel makeSelectBox() {
+        String[] occasionNames = new String[anniversaries.length];
+        for (int i = 0; i < anniversaries.length; i++) {
+            occasionNames[i] = anniversaries[i].getName();
+        }
+
+        JPanel rows = new JPanel(new GridLayout(3, 1, 0, 12));
+        rows.setOpaque(false);
+        rows.add(makeChipRow("기념일", occasionNames, occasionChips));
+        rows.add(makeChipRow("받는 사람", TARGETS, targetChips));
+        rows.add(makeChipRow("예산", BUDGET_NAMES, budgetChips));
+
+        recommendButton.addActionListener(this);
+        againButton.addActionListener(this);
+        againButton.setEnabled(false);   // 처음에는 추천받기를 먼저 눌러야 함
+
+        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        buttons.setOpaque(false);
+        buttons.add(againButton);
+        buttons.add(recommendButton);
+
+        RoundPanel box = new RoundPanel(Color.WHITE, 22, true);
+        box.setLayout(new BorderLayout(0, 18));
+        box.setBorder(new EmptyBorder(20, 22, 22, 22));
+        box.add(rows, BorderLayout.CENTER);
+        box.add(buttons, BorderLayout.SOUTH);
+        return box;
+    }
+
     /** 프로그램 시작점 */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Main().setVisible(true));
