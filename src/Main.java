@@ -100,6 +100,30 @@ public class Main extends JFrame implements ActionListener {
         return box;
     }
 
+    /** "기념일 [생일] [크리스마스] ..." 처럼 한 줄짜리 선택 칩 만들기 */
+    private JPanel makeChipRow(String title, String[] names, Chip[] chips) {
+        JLabel label = new JLabel(title);
+        label.setFont(new Font(FONT, Font.BOLD, 14));
+        label.setForeground(TEXT);
+        label.setPreferredSize(new Dimension(80, 36));
+
+        JPanel chipLine = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
+        chipLine.setOpaque(false);
+        ButtonGroup group = new ButtonGroup();   // 한 줄에서 하나만 선택되게
+        for (int i = 0; i < names.length; i++) {
+            chips[i] = new Chip(names[i]);
+            group.add(chips[i]);
+            chipLine.add(chips[i]);
+        }
+        chips[0].setSelected(true);   // 첫 번째를 기본 선택
+
+        JPanel row = new JPanel(new BorderLayout());
+        row.setOpaque(false);
+        row.add(label, BorderLayout.WEST);
+        row.add(chipLine, BorderLayout.CENTER);
+        return row;
+    }
+
     /** 프로그램 시작점 */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Main().setVisible(true));
