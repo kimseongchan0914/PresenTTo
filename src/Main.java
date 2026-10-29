@@ -176,4 +176,38 @@ public class Main extends JFrame implements ActionListener {
         }
     }
 
+    /** 맨 위 그라데이션 제목 띠 (JPanel 상속) */
+    static class Header extends JPanel {
+        Header() {
+            setLayout(new BorderLayout());
+            setPreferredSize(new Dimension(0, 120));
+            setBorder(new EmptyBorder(24, 30, 24, 30));
+
+            JLabel title = new JLabel("준비된 선물");
+            title.setFont(new Font(FONT, Font.BOLD, 30));
+            title.setForeground(Color.WHITE);
+            JLabel subtitle = new JLabel("기념일과 받는 사람과 예산만 고르면 딱 맞는 선물을 골라 드려요");
+            subtitle.setFont(new Font(FONT, Font.PLAIN, 14));
+            subtitle.setForeground(new Color(255, 235, 235));
+
+            JPanel texts = new JPanel(new GridLayout(2, 1, 0, 4));
+            texts.setOpaque(false);
+            texts.add(title);
+            texts.add(subtitle);
+            add(texts, BorderLayout.CENTER);
+            add(new GiftIcon(new Color(255, 255, 255, 230), 64), BorderLayout.EAST);
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setPaint(new GradientPaint(0, 0, new Color(240, 98, 104), getWidth(), getHeight(), new Color(250, 140, 120)));
+            g2.fillRect(0, 0, getWidth(), getHeight());
+            g2.setColor(new Color(255, 255, 255, 25));   // 장식용 동그라미
+            g2.fillOval(getWidth() - 220, -60, 180, 180);
+            g2.fillOval(getWidth() - 120, 50, 120, 120);
+            g2.dispose();
+        }
+    }
 }
