@@ -54,3 +54,14 @@ class ParentsDay extends Anniversary {
     }
 }
 
+/** 빼빼로데이 */
+class PeperoDay extends Anniversary {
+    public PeperoDay() {
+        super("빼빼로데이");
+    }
+
+    @Override
+    public String getMessage() {
+        return "부담 없는 간식 선물로 고마운 마음을 가볍게 전해 보세요!";
+    }
+}
