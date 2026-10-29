@@ -48,5 +48,17 @@ public class GiftRecommender {
                 new String[]{"크리스마스", "생일"}, new String[]{"친구", "부모님", "형제자매"}));
         gifts.add(new Gift("보드게임", 30000, "모여서 함께 즐길 수 있는 선물",
                 new String[]{"크리스마스", "생일"}, new String[]{"친구", "형제자매"}));
+        gifts.add(new Gift("카네이션 꽃바구니", 30000, "어버이날 대표 선물",
+                new String[]{"어버이날"}, new String[]{"부모님"}));
+        gifts.add(new Gift("블루투스 스피커", 45000, "좋아하는 노래를 더 크게 들을 수 있어요.",
+                new String[]{"생일", "크리스마스"}, new String[]{"친구", "형제자매"}));
+        gifts.add(new Gift("홍삼 세트", 45000, "부모님 건강을 챙기는 든든한 선물",
+                new String[]{"어버이날", "생일"}, new String[]{"부모님"}));
+        gifts.add(new Gift("용돈 꽃다발", 55000, "꽃 사이에 용돈을 넣어 웃음까지 드려요.",
+                new String[]{"어버이날", "생일"}, new String[]{"부모님"}));
+        gifts.add(new Gift("목·어깨 안마기", 59000, "고생하신 부모님의 피로를 풀어 드려요.",
+                new String[]{"어버이날", "생일"}, new String[]{"부모님"}));
+        gifts.add(new Gift("가족 외식", 80000, "온 가족이 함께하는 맛있는 한 끼",
+                new String[]{"어버이날"}, new String[]{"부모님"}));
     }
 }
