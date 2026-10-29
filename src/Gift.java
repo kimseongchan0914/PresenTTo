@@ -45,4 +45,15 @@ public class Gift {
         return price + "원";
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 }
