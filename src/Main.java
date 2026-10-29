@@ -145,4 +145,35 @@ public class Main extends JFrame implements ActionListener {
         }
     }
 
+    /** 선물 상자 그림 (JComponent 상속) - 사각형과 원으로 직접 그림 */
+    static class GiftIcon extends JComponent {
+        private Color color;
+        private int size;
+
+        GiftIcon(Color color, int size) {
+            this.color = color;
+            this.size = size;
+            setPreferredSize(new Dimension(size, size));
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            int s = size;
+            int x = (getWidth() - s) / 2;
+            int y = (getHeight() - s) / 2;
+            Color ribbon = color.darker();
+
+            g2.setColor(color);
+            g2.fillRoundRect(x + s / 8, y + s * 7 / 16, s * 3 / 4, s / 2, s / 8, s / 8);   // 상자 몸통
+            g2.fillRoundRect(x + s / 16, y + s * 5 / 16, s * 7 / 8, s / 6, s / 8, s / 8);  // 뚜껑
+            g2.setColor(ribbon);
+            g2.fillRect(x + s * 7 / 16, y + s * 5 / 16, s / 8, s * 5 / 8);                  // 세로 리본
+            g2.fillOval(x + s / 4, y + s / 8, s / 4, s / 5);                                // 리본 왼쪽 고리
+            g2.fillOval(x + s / 2, y + s / 8, s / 4, s / 5);                                // 리본 오른쪽 고리
+            g2.dispose();
+        }
+    }
+
 }
