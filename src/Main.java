@@ -215,6 +215,16 @@ public class Main extends JFrame implements ActionListener {
         return card;
     }
 
+    /** 칩 배열에서 선택된 칩의 번호 찾기 */
+    private int selectedIndex(Chip[] chips) {
+        for (int i = 0; i < chips.length; i++) {
+            if (chips[i].isSelected()) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
     /** 프로그램 시작점 */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Main().setVisible(true));
