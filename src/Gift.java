@@ -40,4 +40,9 @@ public class Gift {
         return false;
     }
 
+    /** 화면에 보여줄 가격 글자 (자식 클래스에서 오버라이딩 가능) */
+    public String getPriceText() {
+        return price + "원";
+    }
+
 }
