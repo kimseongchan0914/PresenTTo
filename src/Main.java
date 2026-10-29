@@ -34,6 +34,45 @@ public class Main extends JFrame implements ActionListener {
     static final Color LINE = new Color(238, 228, 220);        // 테두리
     static final String FONT = "Apple SD Gothic Neo";          // 맥 한글 글꼴
 
+    private Anniversary[] anniversaries = Anniversaries.getAll();
+    private Chip[] occasionChips = new Chip[anniversaries.length];
+    private Chip[] targetChips = new Chip[TARGETS.length];
+    private Chip[] budgetChips = new Chip[BUDGET_NAMES.length];
+
+    private RoundButton recommendButton = new RoundButton("선물 추천받기", ACCENT, ACCENT_DARK, Color.WHITE);
+    private RoundButton againButton = new RoundButton("다른 추천 보기", Color.WHITE, ACCENT_LIGHT, ACCENT);
+    private JLabel conditionLabel = new JLabel(" ");
+    private JLabel messageLabel = new JLabel(" ");
+    private JPanel cardPanel = new JPanel(new GridLayout(1, 3, 16, 0));   // 선물 카드 3장이 들어갈 곳
+
+    private GiftRecommender recommender = new GiftRecommender();
+
+    public Main() {
+        setTitle("준비된 선물");
+        setSize(840, 720);
+        setMinimumSize(new Dimension(780, 680));
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        JPanel body = new JPanel(new BorderLayout(0, 18));
+        body.setBackground(BG);
+        body.setBorder(new EmptyBorder(22, 26, 26, 26));
+        body.add(makeSelectBox(), BorderLayout.NORTH);
+        body.add(makeResultArea(), BorderLayout.CENTER);
+
+        JPanel main = new JPanel(new BorderLayout());
+        main.add(new Header(), BorderLayout.NORTH);
+        main.add(body, BorderLayout.CENTER);
+        add(main);
+
+        showEmpty();
+    }
+
+    /** 프로그램 시작점 */
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new Main().setVisible(true));
+    }
+
     // ==================== 화면 꾸미기용 부품 클래스 ====================
 
     /** 둥근 모서리 패널 (JPanel 상속) - shadow가 true면 은은한 그림자도 그림 */
