@@ -30,3 +30,15 @@ class Birthday extends Anniversary {
     }
 }
 
+/** 크리스마스 */
+class Christmas extends Anniversary {
+    public Christmas() {
+        super("크리스마스");
+    }
+
+    @Override
+    public String getMessage() {
+        return "따뜻하고 포근한 선물로 연말 분위기를 함께 나눠 보세요!";
+    }
+}
+
