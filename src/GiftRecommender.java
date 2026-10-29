@@ -32,5 +32,21 @@ public class GiftRecommender {
                 new String[]{"생일", "빼빼로데이"}, new String[]{"친구", "형제자매"}));
         gifts.add(new Gift("카페 음료 쿠폰", 9500, "좋아하는 카페에서 쉬어 가라는 의미를 담아서",
                 new String[]{"생일", "빼빼로데이"}, new String[]{"친구", "형제자매"}));
+        gifts.add(new Gift("양말 세트", 9000, "귀여운 무늬 양말로 가볍게 마음 전하기",
+                new String[]{"크리스마스", "생일"}, new String[]{"친구", "형제자매", "부모님"}));
+        gifts.add(new Gift("핸드크림 세트", 15000, "향 좋은 핸드크림은 누구에게나 쓸모 있어요.",
+                new String[]{"생일", "크리스마스", "어버이날"}, new String[]{"친구", "부모님", "형제자매"}));
+        gifts.add(new Gift("무드등", 18000, "방 분위기를 바꿔 주는 은은한 조명",
+                new String[]{"크리스마스", "생일"}, new String[]{"친구", "형제자매"}));
+        gifts.add(new Gift("스노우볼 오르골", 22000, "흔들면 눈이 내리는 감성 선물",
+                new String[]{"크리스마스"}, new String[]{"친구", "형제자매"}));
+        gifts.add(new Gift("텀블러", 22000, "매일 들고 다니며 쓰는 실용 선물",
+                new String[]{"생일", "크리스마스"}, new String[]{"친구", "부모님", "형제자매"}));
+        gifts.add(new Gift("케이크 기프티콘", 25000, "생일에는 역시 케이크!",
+                new String[]{"생일"}, new String[]{"친구", "부모님", "형제자매"}));
+        gifts.add(new Gift("목도리·장갑 세트", 28000, "추운 겨울을 따뜻하게 지켜 주는 선물",
+                new String[]{"크리스마스", "생일"}, new String[]{"친구", "부모님", "형제자매"}));
+        gifts.add(new Gift("보드게임", 30000, "모여서 함께 즐길 수 있는 선물",
+                new String[]{"크리스마스", "생일"}, new String[]{"친구", "형제자매"}));
     }
 }
