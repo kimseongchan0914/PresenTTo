@@ -155,7 +155,7 @@ public class Main extends JFrame implements ActionListener {
 
     /** 선물 한 개를 보여주는 카드 만들기 */
     private JPanel makeGiftCard(Gift gift, int number, Anniversary anniversary) {
-        boolean handmade = gift instanceof HandmadeGift;   // 마음 선물이면 초록색으로
+        boolean handmade = gift.isHandmade();   // 다형성: 마음 선물이면 true가 나옴 → 초록색으로
         Color main = handmade ? GREEN : ACCENT;
         Color light = handmade ? GREEN_LIGHT : ACCENT_LIGHT;
 

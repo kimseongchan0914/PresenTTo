@@ -45,6 +45,11 @@ public class Gift {
         return price + "원";
     }
 
+    /** 마음 선물인지 알려줌 (일반 선물은 false, HandmadeGift에서 오버라이딩) */
+    public boolean isHandmade() {
+        return false;
+    }
+
     public String getName() {
         return name;
     }

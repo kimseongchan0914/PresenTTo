@@ -14,4 +14,9 @@ public class HandmadeGift extends Gift {
     public String getPriceText() {
         return "0원 (정성 100%)";
     }
+
+    @Override
+    public boolean isHandmade() {
+        return true;
+    }
 }
