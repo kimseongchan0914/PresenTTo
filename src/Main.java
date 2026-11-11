@@ -40,7 +40,6 @@ public class Main extends JFrame implements ActionListener {
     private Chip[] budgetChips = new Chip[BUDGET_NAMES.length];
 
     private RoundButton recommendButton = new RoundButton("선물 추천받기", ACCENT, ACCENT_DARK, Color.WHITE);
-    private RoundButton againButton = new RoundButton("다른 추천 보기", Color.WHITE, ACCENT_LIGHT, ACCENT);
     private JLabel conditionLabel = new JLabel(" ");
     private JLabel messageLabel = new JLabel(" ");
     private JPanel cardPanel = new JPanel(new GridLayout(1, 3, 16, 0));   // 선물 카드 3장이 들어갈 곳
@@ -84,12 +83,9 @@ public class Main extends JFrame implements ActionListener {
         rows.add(makeChipRow("예산", BUDGET_NAMES, budgetChips));
 
         recommendButton.addActionListener(this);
-        againButton.addActionListener(this);
-        againButton.setEnabled(false);   // 처음에는 추천받기를 먼저 눌러야 함
 
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         buttons.setOpaque(false);
-        buttons.add(againButton);
         buttons.add(recommendButton);
 
         RoundPanel box = new RoundPanel(Color.WHITE, 22, true);
@@ -158,13 +154,22 @@ public class Main extends JFrame implements ActionListener {
     }
 
     /** 선물 한 개를 보여주는 카드 만들기 */
-    private JPanel makeGiftCard(Gift gift, int number) {
+    private JPanel makeGiftCard(Gift gift, int number, Anniversary anniversary) {
         boolean handmade = gift instanceof HandmadeGift;   // 마음 선물이면 초록색으로
         Color main = handmade ? GREEN : ACCENT;
         Color light = handmade ? GREEN_LIGHT : ACCENT_LIGHT;
 
+        // 태그 글자 정하기
+        String tagText = "추천 " + number;
+        if (handmade) {
+            tagText = "마음 선물";
+        }
+        if (!gift.fitsOccasion(anniversary.getName())) {
+            tagText = "이런 것도 있어요";   // 기념일은 안 맞지만 빈자리를 채운 선물
+        }
+
         // 위쪽: 태그 + 선물 아이콘
-        JLabel tag = new JLabel(handmade ? "마음 선물" : "추천 " + number);
+        JLabel tag = new JLabel(tagText);
         tag.setFont(new Font(FONT, Font.BOLD, 12));
         tag.setForeground(main);
         RoundPanel tagBox = new RoundPanel(light, 14, false);
@@ -241,12 +246,12 @@ public class Main extends JFrame implements ActionListener {
         // 선물 카드 다시 채우기
         cardPanel.removeAll();
         for (int i = 0; i < gifts.size(); i++) {
-            cardPanel.add(makeGiftCard(gifts.get(i), i + 1));
+            cardPanel.add(makeGiftCard(gifts.get(i), i + 1, anniversary));
         }
         cardPanel.revalidate();   // 바뀐 화면 다시 그리기
         cardPanel.repaint();
 
-        againButton.setEnabled(true);
+        recommendButton.setText("다른 추천 보기");   // 한 번 누른 뒤에는 버튼 글자만 바꿈
     }
 
     /** 칩 배열에서 선택된 칩의 번호 찾기 */
