@@ -11,55 +11,72 @@ public class GiftRecommender {
     public GiftRecommender() {
         // ===== 마음 선물 (HandmadeGift) =====
         gifts.add(new HandmadeGift("정성 가득 손편지", "평소 하지 못했던 고마운 말을 꾹꾹 눌러 써 보세요.",
-                new String[]{"생일", "크리스마스", "어버이날", "빼빼로데이"},
-                new String[]{"친구", "부모님", "선생님", "형제자매"}));
+                new String[]{"생일", "커플 100일", "발렌타인데이", "화이트데이", "어버이날", "스승의날", "빼빼로데이", "크리스마스"},
+                new String[]{"친구", "연인", "부모님", "조부모님", "형제자매", "선생님"}));
         gifts.add(new HandmadeGift("반 친구들과 롤링페이퍼", "여러 사람의 마음을 한 장에 모아 전해요.",
-                new String[]{"생일", "크리스마스"},
+                new String[]{"스승의날", "생일", "크리스마스"},
                 new String[]{"선생님", "친구"}));
         gifts.add(new HandmadeGift("감사 영상 편지", "사진과 영상을 모아 짧은 감사 영상을 만들어요.",
-                new String[]{"어버이날", "생일"},
-                new String[]{"부모님", "선생님"}));
+                new String[]{"어버이날", "스승의날", "생일"},
+                new String[]{"부모님", "조부모님", "선생님"}));
         gifts.add(new HandmadeGift("집안일 쿠폰북", "설거지 / 청소 / 안마 쿠폰을 직접 만들어 드려요.",
                 new String[]{"어버이날", "생일"},
-                new String[]{"부모님"}));
+                new String[]{"부모님", "조부모님"}));
+        gifts.add(new HandmadeGift("추억 사진 앨범", "함께 찍은 사진을 모아 직접 꾸민 앨범이에요.",
+                new String[]{"커플 100일", "생일", "발렌타인데이", "화이트데이"},
+                new String[]{"연인", "친구"}));
 
         // ===== 일반 선물 (Gift) =====
         gifts.add(new Gift("빼빼로 여러 맛 세트", 6000, "여러 맛을 골라 담은 기본 선물",
-                new String[]{"빼빼로데이"}, new String[]{"친구", "형제자매"}));
+                new String[]{"빼빼로데이"}, new String[]{"친구", "연인", "형제자매"}));
         gifts.add(new Gift("빼빼로 만들기 키트", 9000, "직접 만들어 주면 정성이 두 배!",
-                new String[]{"빼빼로데이"}, new String[]{"친구", "형제자매"}));
+                new String[]{"빼빼로데이"}, new String[]{"친구", "연인", "형제자매"}));
         gifts.add(new Gift("편의점 기프티콘", 5000, "메신저로 바로 보낼 수 있는 부담 없는 선물",
                 new String[]{"생일", "빼빼로데이"}, new String[]{"친구", "형제자매"}));
         gifts.add(new Gift("카페 음료 쿠폰", 9500, "좋아하는 카페에서 쉬어 가라는 의미를 담아서",
-                new String[]{"생일", "빼빼로데이"}, new String[]{"친구", "형제자매"}));
+                new String[]{"생일", "빼빼로데이"}, new String[]{"친구", "연인", "형제자매"}));
         gifts.add(new Gift("양말 세트", 9000, "귀여운 무늬 양말로 가볍게 마음 전하기",
-                new String[]{"크리스마스", "생일"}, new String[]{"친구", "형제자매", "부모님"}));
+                new String[]{"크리스마스", "생일"}, new String[]{"친구", "형제자매", "부모님", "조부모님"}));
+        gifts.add(new Gift("수제 초콜릿 상자", 12000, "발렌타인데이엔 역시 초콜릿!",
+                new String[]{"발렌타인데이"}, new String[]{"연인", "친구"}));
+        gifts.add(new Gift("사탕 꽃다발", 15000, "사탕으로 만든 꽃다발로 달콤하게 답장해요.",
+                new String[]{"화이트데이"}, new String[]{"연인", "친구"}));
+        gifts.add(new Gift("커플 키링", 15000, "가방에 달고 다니는 둘만의 표시",
+                new String[]{"커플 100일", "발렌타인데이", "화이트데이"}, new String[]{"연인"}));
         gifts.add(new Gift("핸드크림 세트", 15000, "향 좋은 핸드크림은 누구에게나 쓸모 있어요.",
-                new String[]{"생일", "크리스마스", "어버이날"}, new String[]{"친구", "부모님", "형제자매"}));
+                new String[]{"생일", "크리스마스", "어버이날", "화이트데이"}, new String[]{"친구", "연인", "부모님", "조부모님", "형제자매"}));
         gifts.add(new Gift("무드등", 18000, "방 분위기를 바꿔 주는 은은한 조명",
-                new String[]{"크리스마스", "생일"}, new String[]{"친구", "형제자매"}));
+                new String[]{"크리스마스", "생일", "커플 100일"}, new String[]{"친구", "연인", "형제자매"}));
         gifts.add(new Gift("스노우볼 오르골", 22000, "흔들면 눈이 내리는 감성 선물",
-                new String[]{"크리스마스"}, new String[]{"친구", "형제자매"}));
+                new String[]{"크리스마스"}, new String[]{"친구", "연인", "형제자매"}));
         gifts.add(new Gift("텀블러", 22000, "매일 들고 다니며 쓰는 실용 선물",
-                new String[]{"생일", "크리스마스"}, new String[]{"친구", "부모님", "형제자매"}));
-        gifts.add(new Gift("케이크 기프티콘", 25000, "생일에는 역시 케이크!",
-                new String[]{"생일"}, new String[]{"친구", "부모님", "형제자매"}));
+                new String[]{"생일", "크리스마스"}, new String[]{"친구", "연인", "부모님", "형제자매"}));
+        gifts.add(new Gift("케이크 기프티콘", 25000, "축하하는 날에는 역시 케이크!",
+                new String[]{"생일", "커플 100일"}, new String[]{"친구", "연인", "부모님", "조부모님", "형제자매"}));
         gifts.add(new Gift("목도리·장갑 세트", 28000, "추운 겨울을 따뜻하게 지켜 주는 선물",
-                new String[]{"크리스마스", "생일"}, new String[]{"친구", "부모님", "형제자매"}));
+                new String[]{"크리스마스", "생일"}, new String[]{"친구", "연인", "부모님", "조부모님", "형제자매"}));
         gifts.add(new Gift("보드게임", 30000, "모여서 함께 즐길 수 있는 선물",
                 new String[]{"크리스마스", "생일"}, new String[]{"친구", "형제자매"}));
         gifts.add(new Gift("카네이션 꽃바구니", 30000, "어버이날 대표 선물",
-                new String[]{"어버이날"}, new String[]{"부모님"}));
+                new String[]{"어버이날"}, new String[]{"부모님", "조부모님"}));
+        gifts.add(new Gift("꽃다발", 35000, "말없이 마음을 전하는 가장 확실한 방법",
+                new String[]{"커플 100일", "발렌타인데이", "화이트데이", "생일"}, new String[]{"연인"}));
+        gifts.add(new Gift("포근한 내복 세트", 35000, "어르신 겨울 필수품, 따뜻하게 입으세요.",
+                new String[]{"크리스마스", "어버이날", "생일"}, new String[]{"조부모님"}));
         gifts.add(new Gift("블루투스 스피커", 45000, "좋아하는 노래를 더 크게 들을 수 있어요.",
-                new String[]{"생일", "크리스마스"}, new String[]{"친구", "형제자매"}));
-        gifts.add(new Gift("홍삼 세트", 45000, "부모님 건강을 챙기는 든든한 선물",
-                new String[]{"어버이날", "생일"}, new String[]{"부모님"}));
+                new String[]{"생일", "크리스마스"}, new String[]{"친구", "연인", "형제자매"}));
+        gifts.add(new Gift("홍삼 세트", 45000, "건강을 챙겨 드리는 든든한 선물",
+                new String[]{"어버이날", "생일"}, new String[]{"부모님", "조부모님"}));
+        gifts.add(new Gift("향수", 48000, "은은한 향으로 오래 기억되는 선물",
+                new String[]{"커플 100일", "발렌타인데이", "생일", "크리스마스"}, new String[]{"연인"}));
+        gifts.add(new Gift("커플 반지", 49000, "100일을 기념하는 둘만의 반지",
+                new String[]{"커플 100일"}, new String[]{"연인"}));
         gifts.add(new Gift("용돈 꽃다발", 55000, "꽃 사이에 용돈을 넣어 웃음까지 드려요.",
-                new String[]{"어버이날", "생일"}, new String[]{"부모님"}));
-        gifts.add(new Gift("목·어깨 안마기", 59000, "고생하신 부모님의 피로를 풀어 드려요.",
-                new String[]{"어버이날", "생일"}, new String[]{"부모님"}));
+                new String[]{"어버이날", "생일"}, new String[]{"부모님", "조부모님"}));
+        gifts.add(new Gift("목·어깨 안마기", 59000, "고생하신 피로를 시원하게 풀어 드려요.",
+                new String[]{"어버이날", "생일"}, new String[]{"부모님", "조부모님"}));
         gifts.add(new Gift("가족 외식", 80000, "온 가족이 함께하는 맛있는 한 끼",
-                new String[]{"어버이날"}, new String[]{"부모님"}));
+                new String[]{"어버이날"}, new String[]{"부모님", "조부모님"}));
     }
 
     /**

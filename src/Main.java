@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class Main extends JFrame implements ActionListener {
 
     // 선택지
-    private static final String[] TARGETS = {"친구", "부모님", "선생님", "형제자매"};
+    private static final String[] TARGETS = {"친구", "연인", "부모님", "조부모님", "형제자매", "선생님"};
     private static final String[] BUDGET_NAMES = {"1만원 이하", "3만원 이하", "5만원 이하", "상관없음"};
     private static final int[] BUDGET_MAX = {10000, 30000, 50000, Integer.MAX_VALUE};
 
@@ -48,8 +48,8 @@ public class Main extends JFrame implements ActionListener {
 
     public Main() {
         setTitle("준비된 선물");
-        setSize(840, 720);
-        setMinimumSize(new Dimension(780, 680));
+        setSize(880, 820);
+        setMinimumSize(new Dimension(840, 780));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -72,15 +72,21 @@ public class Main extends JFrame implements ActionListener {
     /** 조건 고르는 흰색 상자 (기념일 / 받는 사람 / 예산 + 버튼) */
     private JPanel makeSelectBox() {
         String[] occasionNames = new String[anniversaries.length];
+        String[] occasionDates = new String[anniversaries.length];
         for (int i = 0; i < anniversaries.length; i++) {
             occasionNames[i] = anniversaries[i].getName();
+            occasionDates[i] = anniversaries[i].getDate();
         }
 
-        JPanel rows = new JPanel(new GridLayout(3, 1, 0, 12));
+        // 줄마다 높이가 달라서 GridLayout 대신 위에서 아래로 쌓는 BoxLayout 사용
+        JPanel rows = new JPanel();
+        rows.setLayout(new BoxLayout(rows, BoxLayout.Y_AXIS));
         rows.setOpaque(false);
-        rows.add(makeChipRow("기념일", occasionNames, occasionChips));
-        rows.add(makeChipRow("받는 사람", TARGETS, targetChips));
-        rows.add(makeChipRow("예산", BUDGET_NAMES, budgetChips));
+        rows.add(makeChipRow("기념일", occasionNames, occasionDates, occasionChips));
+        rows.add(Box.createVerticalStrut(14));
+        rows.add(makeChipRow("받는 사람", TARGETS, null, targetChips));
+        rows.add(Box.createVerticalStrut(14));
+        rows.add(makeChipRow("예산", BUDGET_NAMES, null, budgetChips));
 
         recommendButton.addActionListener(this);
 
@@ -96,18 +102,28 @@ public class Main extends JFrame implements ActionListener {
         return box;
     }
 
-    /** "기념일 [생일] [크리스마스] ..." 처럼 한 줄짜리 선택 칩 만들기 */
-    private JPanel makeChipRow(String title, String[] names, Chip[] chips) {
+    /**
+     * "기념일 [생일] [크리스마스] ..." 처럼 선택 칩 한 줄 만들기
+     * subs(날짜)가 있으면 칩 아래에 작은 글자로 날짜를 보여주고, 4칸씩 줄을 나눠 배치
+     */
+    private JPanel makeChipRow(String title, String[] names, String[] subs, Chip[] chips) {
         JLabel label = new JLabel(title);
         label.setFont(new Font(FONT, Font.BOLD, 14));
         label.setForeground(TEXT);
         label.setPreferredSize(new Dimension(80, 36));
+        label.setVerticalAlignment(SwingConstants.TOP);
+        label.setBorder(new EmptyBorder(subs == null ? 9 : 16, 0, 0, 0));   // 첫 줄 칩과 높이 맞추기
 
-        JPanel chipLine = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
+        JPanel chipLine;
+        if (subs == null) {
+            chipLine = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
+        } else {
+            chipLine = new JPanel(new GridLayout(0, 4, 8, 8));   // 4개씩 줄바꿈
+        }
         chipLine.setOpaque(false);
         ButtonGroup group = new ButtonGroup();   // 한 줄에서 하나만 선택되게
         for (int i = 0; i < names.length; i++) {
-            chips[i] = new Chip(names[i]);
+            chips[i] = new Chip(names[i], subs == null ? null : subs[i]);
             group.add(chips[i]);
             chipLine.add(chips[i]);
         }
@@ -344,21 +360,35 @@ public class Main extends JFrame implements ActionListener {
         }
     }
 
-    /** 선택 칩 (JToggleButton 상속) - 선택되면 빨간색으로 채워짐 */
+    /** 선택 칩 (JToggleButton 상속) - 선택되면 빨간색으로 채워짐, sub가 있으면 아래에 작은 글자 */
     static class Chip extends JToggleButton {
-        Chip(String label) {
-            super(label);
-            setFont(new Font(FONT, Font.PLAIN, 14));
-            setForeground(TEXT);
-            setPreferredSize(new Dimension(getPreferredSize().width + 16, 36));
+        private String title;
+        private String sub;   // 아래 작은 글자 (예: 날짜), 없으면 null
+
+        Chip(String title, String sub) {
+            this.title = title;
+            this.sub = sub;
             setContentAreaFilled(false);
             setBorderPainted(false);
             setFocusPainted(false);
             setCursor(new Cursor(Cursor.HAND_CURSOR));
-            addItemListener(e -> {   // 선택 상태에 따라 글자색 / 굵기 변경
-                setForeground(isSelected() ? Color.WHITE : TEXT);
-                setFont(new Font(FONT, isSelected() ? Font.BOLD : Font.PLAIN, 14));
-            });
+            updateLook();
+            setPreferredSize(new Dimension(getPreferredSize().width + 16, sub == null ? 36 : 52));
+            addItemListener(e -> updateLook());   // 선택 상태가 바뀔 때마다 모양 갱신
+        }
+
+        /** 선택 상태에 따라 글자색 / 굵기 변경 */
+        private void updateLook() {
+            boolean on = isSelected();
+            setForeground(on ? Color.WHITE : TEXT);
+            setFont(new Font(FONT, on ? Font.BOLD : Font.PLAIN, 14));
+            if (sub == null) {
+                setText(title);
+            } else {   // html로 두 줄 만들기 (윗줄: 이름, 아랫줄: 작은 날짜)
+                String subColor = on ? "#FFE4E4" : "#A09184";
+                setText("<html><center>" + title + "<br><span style='font-size:9px; font-weight:normal; color:"
+                        + subColor + "'>" + sub + "</span></center></html>");
+            }
         }
 
         @Override
@@ -366,14 +396,15 @@ public class Main extends JFrame implements ActionListener {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             int h = getHeight() - 1;
+            int arc = sub == null ? h : 20;   // 두 줄 칩은 알약 모양 대신 둥근 사각형
             if (isSelected()) {
                 g2.setColor(ACCENT);
-                g2.fillRoundRect(0, 0, getWidth() - 1, h, h, h);
+                g2.fillRoundRect(0, 0, getWidth() - 1, h, arc, arc);
             } else {
                 g2.setColor(getModel().isRollover() ? ACCENT_LIGHT : BG);
-                g2.fillRoundRect(0, 0, getWidth() - 1, h, h, h);
+                g2.fillRoundRect(0, 0, getWidth() - 1, h, arc, arc);
                 g2.setColor(LINE);
-                g2.drawRoundRect(0, 0, getWidth() - 1, h, h, h);
+                g2.drawRoundRect(0, 0, getWidth() - 1, h, arc, arc);
             }
             g2.dispose();
             super.paintComponent(g);
