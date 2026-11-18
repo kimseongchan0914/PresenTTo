@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Path2D;
 import java.util.ArrayList;
 
 /**
@@ -42,11 +43,17 @@ public class Main extends JFrame implements ActionListener {
     private Chip[] budgetChips = new Chip[BUDGET_NAMES.length];
 
     private RoundButton recommendButton = new RoundButton("선물 추천받기", ACCENT, ACCENT_DARK, Color.WHITE);
+    private RoundButton wishButton = new RoundButton("찜 목록 (0)", Color.WHITE, ACCENT_LIGHT, ACCENT);
     private JLabel conditionLabel = new JLabel(" ");
     private JLabel messageLabel = new JLabel(" ");
     private JPanel cardPanel = new JPanel(new GridLayout(1, 3, 16, 0));   // 선물 카드 3장이 들어갈 곳
 
     private GiftRecommender recommender = new GiftRecommender();
+    private Wishlist wishlist = new Wishlist();
+
+    // 지금 화면에 보이는 카드 정보 (찜 목록을 닫은 뒤 하트를 다시 그릴 때 사용)
+    private ArrayList<Gift> shownGifts = new ArrayList<>();
+    private Anniversary shownAnniversary;
 
     public Main() {
         setTitle("준비된 선물");
@@ -96,9 +103,11 @@ public class Main extends JFrame implements ActionListener {
         rows.add(makeChipRow("예산", BUDGET_NAMES, null, budgetChips));
 
         recommendButton.addActionListener(this);
+        wishButton.addActionListener(this);   // 두 버튼 모두 actionPerformed 하나에서 처리
 
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         buttons.setOpaque(false);
+        buttons.add(wishButton);
         buttons.add(recommendButton);
 
         RoundPanel box = new RoundPanel(Color.WHITE, 22, true);
@@ -201,7 +210,23 @@ public class Main extends JFrame implements ActionListener {
         JPanel top = new JPanel(new BorderLayout());
         top.setOpaque(false);
         top.add(tagLine, BorderLayout.WEST);
-        top.add(new GiftIcon(main, 40), BorderLayout.EAST);
+
+        // 오른쪽 위: 하트(찜하기) + 선물 아이콘
+        HeartButton heart = new HeartButton();
+        heart.setSelected(wishlist.contains(gift));   // 이미 찜한 선물이면 채워진 하트
+        heart.addActionListener(e -> {
+            if (heart.isSelected()) {
+                wishlist.add(gift);
+            } else {
+                wishlist.remove(gift);
+            }
+            updateWishButton();
+        });
+        JPanel icons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 6, 0));
+        icons.setOpaque(false);
+        icons.add(heart);
+        icons.add(new GiftIcon(main, 40));
+        top.add(icons, BorderLayout.EAST);
 
         // 가운데: 이름 + 가격
         JLabel nameLabel = new JLabel("<html>" + gift.getName() + "</html>");
@@ -243,6 +268,15 @@ public class Main extends JFrame implements ActionListener {
     /** 버튼을 눌렀을 때 실행 (ActionListener 인터페이스의 메소드) */
     @Override
     public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == wishButton) {   // 어떤 버튼이 눌렸는지 구분
+            showWishlist();
+        } else {
+            recommend();
+        }
+    }
+
+    /** [선물 추천받기] 버튼 */
+    private void recommend() {
         // 선택된 칩 찾기
         Anniversary anniversary = anniversaries[selectedIndex(occasionChips)];
         String target = TARGETS[selectedIndex(targetChips)];
@@ -261,15 +295,116 @@ public class Main extends JFrame implements ActionListener {
         }
         messageLabel.setText(message);
 
-        // 선물 카드 다시 채우기
+        shownGifts = gifts;
+        shownAnniversary = anniversary;
+        showCards();
+
+        recommendButton.setText("다른 추천 보기");   // 한 번 누른 뒤에는 버튼 글자만 바꿈
+    }
+
+    /** 선물 카드 다시 채우기 */
+    private void showCards() {
         cardPanel.removeAll();
-        for (int i = 0; i < gifts.size(); i++) {
-            cardPanel.add(makeGiftCard(gifts.get(i), i + 1, anniversary));
+        for (int i = 0; i < shownGifts.size(); i++) {
+            cardPanel.add(makeGiftCard(shownGifts.get(i), i + 1, shownAnniversary));
         }
         cardPanel.revalidate();   // 바뀐 화면 다시 그리기
         cardPanel.repaint();
+    }
 
-        recommendButton.setText("다른 추천 보기");   // 한 번 누른 뒤에는 버튼 글자만 바꿈
+    /** 찜 목록 버튼 글자를 개수에 맞게 바꾸기 */
+    private void updateWishButton() {
+        wishButton.setText("찜 목록 (" + wishlist.size() + ")");
+    }
+
+    // ==================== 찜 목록 창 ====================
+
+    /** [찜 목록] 버튼 - 찜한 선물과 총액을 보여주는 작은 창 */
+    private void showWishlist() {
+        JDialog dialog = new JDialog(this, "찜 목록", true);   // true: 창을 닫기 전까지 뒤 화면을 못 누름
+        dialog.setSize(440, 520);
+        dialog.setLocationRelativeTo(this);
+        fillWishlist(dialog);
+        dialog.setVisible(true);   // 창이 닫힐 때까지 여기서 기다림
+
+        // 창을 닫은 뒤: 찜 목록에서 뺀 선물이 있을 수 있으니 하트와 버튼 글자 다시 그리기
+        updateWishButton();
+        if (shownAnniversary != null) {
+            showCards();
+        }
+    }
+
+    /** 찜 목록 창 내용 채우기 (선물을 뺄 때마다 다시 호출) */
+    private void fillWishlist(JDialog dialog) {
+        JPanel list = new JPanel();
+        list.setLayout(new BoxLayout(list, BoxLayout.Y_AXIS));
+        list.setOpaque(false);
+
+        if (wishlist.size() == 0) {
+            JLabel empty = new JLabel("아직 찜한 선물이 없어요. 카드의 하트를 눌러 보세요!");
+            empty.setFont(new Font(FONT, Font.PLAIN, 14));
+            empty.setForeground(GRAY);
+            list.add(empty);
+        }
+        for (Gift gift : wishlist.getGifts()) {
+            JLabel name = new JLabel(gift.getName());
+            name.setFont(new Font(FONT, Font.BOLD, 15));
+            name.setForeground(TEXT);
+            JLabel price = new JLabel(gift.getPriceText());   // 다형성: 선물 종류마다 다른 가격 글자
+            price.setFont(new Font(FONT, Font.BOLD, 13));
+            price.setForeground(gift.getColor());
+
+            JPanel texts = new JPanel(new GridLayout(2, 1, 0, 2));
+            texts.setOpaque(false);
+            texts.add(name);
+            texts.add(price);
+
+            RoundButton remove = new RoundButton("빼기", Color.WHITE, ACCENT_LIGHT, ACCENT);
+            remove.setFont(new Font(FONT, Font.BOLD, 13));
+            remove.setPreferredSize(new Dimension(64, 34));
+            remove.setMargin(new Insets(0, 0, 0, 0));   // 버튼 안쪽 여백을 없애서 글자가 잘리지 않게
+            remove.addActionListener(e -> {
+                wishlist.remove(gift);
+                fillWishlist(dialog);   // 목록 다시 그리기
+            });
+            JPanel removeBox = new JPanel(new GridBagLayout());   // 버튼을 세로 가운데에
+            removeBox.setOpaque(false);
+            removeBox.add(remove);
+
+            RoundPanel row = new RoundPanel(Color.WHITE, 16, true);
+            row.setLayout(new BorderLayout());
+            row.setBorder(new EmptyBorder(10, 16, 12, 14));
+            row.add(texts, BorderLayout.CENTER);
+            row.add(removeBox, BorderLayout.EAST);
+            row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 72));
+            row.setAlignmentX(Component.LEFT_ALIGNMENT);
+            list.add(row);
+            list.add(Box.createVerticalStrut(8));
+        }
+
+        JPanel listWrap = new JPanel(new BorderLayout());   // 목록을 위쪽부터 채우기
+        listWrap.setOpaque(false);
+        listWrap.add(list, BorderLayout.NORTH);
+        JScrollPane scroll = new JScrollPane(listWrap);
+        scroll.setBorder(null);
+        scroll.setOpaque(false);
+        scroll.getViewport().setOpaque(false);
+
+        JLabel total = new JLabel("총 " + wishlist.size() + "개  ·  " + String.format("%,d원", wishlist.getTotalPrice()));
+        total.setFont(new Font(FONT, Font.BOLD, 18));
+        total.setForeground(ACCENT);
+        total.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(1, 0, 0, 0, LINE), new EmptyBorder(14, 2, 0, 0)));
+
+        JPanel content = new JPanel(new BorderLayout(0, 12));
+        content.setBackground(BG);
+        content.setBorder(new EmptyBorder(18, 18, 18, 18));
+        content.add(scroll, BorderLayout.CENTER);
+        content.add(total, BorderLayout.SOUTH);
+
+        dialog.setContentPane(content);
+        dialog.revalidate();
+        dialog.repaint();
     }
 
     /** D-day가 가장 적게 남은 기념일의 번호 찾기 (날짜가 없는 기념일은 건너뜀) */
@@ -424,6 +559,47 @@ public class Main extends JFrame implements ActionListener {
             }
             g2.dispose();
             super.paintComponent(g);
+        }
+    }
+
+    /** 찜하기 하트 버튼 (JToggleButton 상속) - 누르면 빨간 하트로 채워짐 */
+    static class HeartButton extends JToggleButton {
+        HeartButton() {
+            setPreferredSize(new Dimension(32, 32));
+            setContentAreaFilled(false);
+            setBorderPainted(false);
+            setFocusPainted(false);
+            setCursor(new Cursor(Cursor.HAND_CURSOR));
+            setToolTipText("찜하기");
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            if (getModel().isRollover()) {   // 마우스를 올리면 연한 동그라미 배경
+                g2.setColor(ACCENT_LIGHT);
+                g2.fillOval(0, 0, getWidth() - 1, getHeight() - 1);
+            }
+
+            // 곡선 두 개로 하트 모양 만들기
+            double w = 18, h = 16;
+            double cx = getWidth() / 2.0;
+            double y = (getHeight() - h) / 2.0 + 1;
+            Path2D heart = new Path2D.Double();
+            heart.moveTo(cx, y + h);                                                  // 아래 뾰족한 끝
+            heart.curveTo(cx - w * 0.95, y + h * 0.5, cx - w * 0.5, y - h * 0.3, cx, y + h * 0.25);
+            heart.curveTo(cx + w * 0.5, y - h * 0.3, cx + w * 0.95, y + h * 0.5, cx, y + h);
+
+            if (isSelected()) {
+                g2.setColor(ACCENT);
+                g2.fill(heart);
+            } else {
+                g2.setColor(GRAY);
+                g2.setStroke(new BasicStroke(1.8f));
+                g2.draw(heart);
+            }
+            g2.dispose();
         }
     }
 
