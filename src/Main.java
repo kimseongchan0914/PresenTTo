@@ -207,12 +207,20 @@ public class Main extends JFrame implements ActionListener {
     private void showEmpty() {
         conditionLabel.setText("어떤 선물이 좋을까요?");
         messageLabel.setText("위에서 조건을 고르고 [선물 추천받기]를 눌러 보세요.");
+        showEmptyCards();
+    }
+
+    /** 카드 자리에 흐린 빈 카드 3장 보여주기 (처음 화면 / 예산 오류일 때) */
+    private void showEmptyCards() {
+        cardPanel.removeAll();
         for (int i = 0; i < 3; i++) {
             RoundPanel card = new RoundPanel(new Color(255, 255, 255, 150), 20, false);
             card.setLayout(new BorderLayout());
             card.add(new GiftIcon(new Color(240, 225, 215), 56), BorderLayout.CENTER);
             cardPanel.add(card);
         }
+        cardPanel.revalidate();
+        cardPanel.repaint();
     }
 
     /** 선물 한 개를 보여주는 카드 만들기 */
@@ -536,6 +544,12 @@ public class Main extends JFrame implements ActionListener {
         messageLabel.setForeground(ACCENT);
         messageLabel.setText(message);
         budgetField.requestFocusInWindow();
+
+        // 이전 추천 카드가 남아 있으면 헷갈리니까 빈 카드로 바꾸기
+        shownGifts = new ArrayList<>();
+        shownAnniversary = null;   // 찜 목록을 닫거나 정렬 칩을 눌러도 이전 카드가 다시 나오지 않게
+        showEmptyCards();
+        recommendButton.setText("선물 추천받기");
     }
 
     /** D-day가 가장 적게 남은 기념일의 번호 찾기 (날짜가 없는 기념일은 건너뜀) */
