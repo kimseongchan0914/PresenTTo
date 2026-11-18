@@ -29,6 +29,8 @@ public class Main extends JFrame implements ActionListener {
     static final Color ACCENT_LIGHT = new Color(255, 232, 230);// 연한 빨강
     static final Color GREEN = new Color(46, 150, 104);        // 마음 선물 색
     static final Color GREEN_LIGHT = new Color(225, 245, 235);
+    static final Color BLUE = new Color(52, 120, 220);         // 모바일 선물 색
+    static final Color BLUE_LIGHT = new Color(228, 238, 252);
     static final Color TEXT = new Color(45, 40, 38);           // 기본 글자
     static final Color GRAY = new Color(130, 120, 112);        // 회색 글자
     static final Color LINE = new Color(238, 228, 220);        // 테두리
@@ -176,15 +178,10 @@ public class Main extends JFrame implements ActionListener {
 
     /** 선물 한 개를 보여주는 카드 만들기 */
     private JPanel makeGiftCard(Gift gift, int number, Anniversary anniversary) {
-        boolean handmade = gift.isHandmade();   // 다형성: 마음 선물이면 true가 나옴 → 초록색으로
-        Color main = handmade ? GREEN : ACCENT;
-        Color light = handmade ? GREEN_LIGHT : ACCENT_LIGHT;
-
-        // 태그 글자 정하기
-        String tagText = "추천 " + number;
-        if (handmade) {
-            tagText = "마음 선물";
-        }
+        // 다형성: 선물 종류(일반 / 마음 / 모바일)마다 다른 색과 태그가 나옴 → if문 없이 처리
+        Color main = gift.getColor();
+        Color light = gift.getLightColor();
+        String tagText = gift.getTag(number);
         if (!gift.fitsOccasion(anniversary.getName())) {
             tagText = "이런 것도 있어요";   // 기념일은 안 맞지만 빈자리를 채운 선물
         }
