@@ -6,8 +6,9 @@ import java.awt.Color;
  * [캡슐화] 모든 변수를 private으로 숨기고 getter로만 값을 꺼낼 수 있게 했습니다.
  *         선물 정보는 실행 중에 바뀌면 안 되므로 setter는 만들지 않았습니다.
  * [오버라이딩] 태그 / 색 / 가격 글자는 자식 클래스(HandmadeGift, GifticonGift)가 바꿔서 씁니다.
+ * [인터페이스] Comparable을 구현해서 Collections.sort()로 가격순 정렬을 할 수 있습니다.
  */
-public class Gift {
+public class Gift implements Comparable<Gift> {
 
     private String name;          // 선물 이름
     private int price;            // 가격 (원)
@@ -57,6 +58,12 @@ public class Gift {
     /** 화면에 보여줄 가격 글자 (자식 클래스에서 오버라이딩 가능) */
     public String getPriceText() {
         return price + "원";
+    }
+
+    /** 가격 비교 (Comparable 인터페이스의 메소드) - 싼 선물이 앞으로 */
+    @Override
+    public int compareTo(Gift other) {
+        return Integer.compare(price, other.price);
     }
 
     /** 카드 왼쪽 위 태그 글자 (일반 선물은 "추천 1" 같은 번호) */

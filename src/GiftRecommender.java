@@ -6,6 +6,11 @@ import java.util.Collections;
  */
 public class GiftRecommender {
 
+    // 정렬 방법
+    public static final int RANDOM = 0;            // 랜덤 (누를 때마다 다른 선물)
+    public static final int CHEAP_FIRST = 1;       // 가격 낮은 순
+    public static final int EXPENSIVE_FIRST = 2;   // 가격 높은 순
+
     private ArrayList<Gift> gifts = new ArrayList<>();
 
     public GiftRecommender() {
@@ -89,8 +94,9 @@ public class GiftRecommender {
      * 조건에 맞는 선물을 최대 3개 골라 줍니다.
      * 1순위: 기념일 + 받는 사람 + 예산이 모두 맞는 선물
      * 2순위: 1순위가 3개보다 적으면 받는 사람 + 예산만 맞는 선물로 채움
+     * order: RANDOM / CHEAP_FIRST / EXPENSIVE_FIRST
      */
-    public ArrayList<Gift> recommend(Anniversary anniversary, String target, int maxPrice) {
+    public ArrayList<Gift> recommend(Anniversary anniversary, String target, int maxPrice, int order) {
         ArrayList<Gift> best = new ArrayList<>();
         ArrayList<Gift> others = new ArrayList<>();
 
@@ -105,9 +111,9 @@ public class GiftRecommender {
             }
         }
 
-        // 섞어서 누를 때마다 다른 선물이 나오게 함
-        Collections.shuffle(best);
-        Collections.shuffle(others);
+        // 순위 안에서 정렬 (1순위가 항상 2순위보다 앞)
+        sort(best, order);
+        sort(others, order);
 
         ArrayList<Gift> result = new ArrayList<>(best);
         result.addAll(others);
@@ -116,6 +122,19 @@ public class GiftRecommender {
         while (result.size() > 3) {
             result.remove(result.size() - 1);
         }
+        if (order != RANDOM) {
+            sort(result, order);   // 고른 3개도 화면에 가격순으로 보이게
+        }
         return result;
+    }
+
+    /** 정렬 방법에 맞게 목록 정렬 */
+    private void sort(ArrayList<Gift> list, int order) {
+        Collections.shuffle(list);   // 먼저 섞어서 가격이 같은 선물끼리는 순서가 매번 달라지게
+        if (order == CHEAP_FIRST) {
+            Collections.sort(list);   // Gift의 compareTo()로 비교 → 싼 것부터
+        } else if (order == EXPENSIVE_FIRST) {
+            Collections.sort(list, Collections.reverseOrder());   // 거꾸로 → 비싼 것부터
+        }
     }
 }

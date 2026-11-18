@@ -22,6 +22,8 @@ public class Main extends JFrame implements ActionListener {
     private static final String[] TARGETS = {"친구", "연인", "부모님", "조부모님", "형제자매", "선생님"};
     private static final String[] BUDGET_NAMES = {"1만원 이하", "3만원 이하", "5만원 이하", "상관없음"};
     private static final int[] BUDGET_MAX = {10000, 30000, 50000, Integer.MAX_VALUE};
+    // 정렬 칩 순서는 GiftRecommender.RANDOM(0) / CHEAP_FIRST(1) / EXPENSIVE_FIRST(2) 와 같음
+    private static final String[] SORT_NAMES = {"랜덤", "가격 낮은 순", "가격 높은 순"};
 
     // 색깔 모음
     static final Color BG = new Color(255, 248, 243);          // 배경
@@ -41,6 +43,7 @@ public class Main extends JFrame implements ActionListener {
     private Chip[] occasionChips = new Chip[anniversaries.length];
     private Chip[] targetChips = new Chip[TARGETS.length];
     private Chip[] budgetChips = new Chip[BUDGET_NAMES.length];
+    private Chip[] sortChips = new Chip[SORT_NAMES.length];
 
     private RoundButton recommendButton = new RoundButton("선물 추천받기", ACCENT, ACCENT_DARK, Color.WHITE);
     private RoundButton wishButton = new RoundButton("찜 목록 (0)", Color.WHITE, ACCENT_LIGHT, ACCENT);
@@ -165,11 +168,33 @@ public class Main extends JFrame implements ActionListener {
         textPanel.add(conditionLabel);
         textPanel.add(messageLabel);
 
+        // 오른쪽: 정렬 칩 (누르면 바로 다시 추천)
+        JPanel sortLine = new JPanel(new FlowLayout(FlowLayout.RIGHT, 6, 0));
+        sortLine.setOpaque(false);
+        ButtonGroup sortGroup = new ButtonGroup();
+        for (int i = 0; i < SORT_NAMES.length; i++) {
+            sortChips[i] = new Chip(SORT_NAMES[i], null);
+            sortChips[i].setFont(new Font(FONT, Font.PLAIN, 13));
+            sortChips[i].setPreferredSize(new Dimension(sortChips[i].getPreferredSize().width, 32));
+            sortChips[i].addActionListener(this);
+            sortGroup.add(sortChips[i]);
+            sortLine.add(sortChips[i]);
+        }
+        sortChips[0].setSelected(true);
+        JPanel sortBox = new JPanel(new GridBagLayout());   // 세로 가운데 정렬
+        sortBox.setOpaque(false);
+        sortBox.add(sortLine);
+
+        JPanel header = new JPanel(new BorderLayout(12, 0));
+        header.setOpaque(false);
+        header.add(textPanel, BorderLayout.CENTER);
+        header.add(sortBox, BorderLayout.EAST);
+
         cardPanel.setOpaque(false);
 
         JPanel result = new JPanel(new BorderLayout(0, 14));
         result.setOpaque(false);
-        result.add(textPanel, BorderLayout.NORTH);
+        result.add(header, BorderLayout.NORTH);
         result.add(cardPanel, BorderLayout.CENTER);
         return result;
     }
@@ -275,7 +300,9 @@ public class Main extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == wishButton) {   // 어떤 버튼이 눌렸는지 구분
             showWishlist();
-        } else {
+        } else if (e.getSource() == recommendButton) {
+            recommend();
+        } else if (shownAnniversary != null) {   // 정렬 칩: 이미 추천받은 상태면 바로 다시 정렬
             recommend();
         }
     }
@@ -287,7 +314,9 @@ public class Main extends JFrame implements ActionListener {
         String target = TARGETS[selectedIndex(targetChips)];
         int budget = selectedIndex(budgetChips);
 
-        ArrayList<Gift> gifts = recommender.recommend(anniversary, target, BUDGET_MAX[budget]);
+        int order = selectedIndex(sortChips);
+
+        ArrayList<Gift> gifts = recommender.recommend(anniversary, target, BUDGET_MAX[budget], order);
 
         // 선택한 조건과 응원 문구 보여주기
         conditionLabel.setText(target + "에게 주는 " + anniversary.getName() + " 선물  ·  " + BUDGET_NAMES[budget]);
@@ -305,7 +334,8 @@ public class Main extends JFrame implements ActionListener {
         shownTarget = target;
         showCards();
 
-        recommendButton.setText("다른 추천 보기");   // 한 번 누른 뒤에는 버튼 글자만 바꿈
+        // 한 번 누른 뒤에는 버튼 글자만 바꿈 (가격순일 때는 결과가 거의 같아서 "다시 추천받기")
+        recommendButton.setText(order == GiftRecommender.RANDOM ? "다른 추천 보기" : "다시 추천받기");
     }
 
     /** 선물 카드 다시 채우기 */
