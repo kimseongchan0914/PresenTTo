@@ -6,6 +6,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Path2D;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.util.ArrayList;
 
 /**
@@ -49,6 +51,7 @@ public class Main extends JFrame implements ActionListener {
     private RoundButton wishButton = new RoundButton("찜 목록 (0)", Color.WHITE, ACCENT_LIGHT, ACCENT);
     private JLabel conditionLabel = new JLabel(" ");
     private JLabel messageLabel = new JLabel(" ");
+    private BudgetField budgetField = new BudgetField();   // 예산 직접 입력 칸
     private JPanel cardPanel = new JPanel(new GridLayout(1, 3, 16, 0));   // 선물 카드 3장이 들어갈 곳
 
     private GiftRecommender recommender = new GiftRecommender();
@@ -105,6 +108,7 @@ public class Main extends JFrame implements ActionListener {
         rows.add(makeChipRow("받는 사람", TARGETS, null, targetChips));
         rows.add(Box.createVerticalStrut(14));
         rows.add(makeChipRow("예산", BUDGET_NAMES, null, budgetChips));
+        setupBudgetField();
 
         recommendButton.addActionListener(this);
         wishButton.addActionListener(this);   // 두 버튼 모두 actionPerformed 하나에서 처리
@@ -300,7 +304,7 @@ public class Main extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == wishButton) {   // 어떤 버튼이 눌렸는지 구분
             showWishlist();
-        } else if (e.getSource() == recommendButton) {
+        } else if (e.getSource() == recommendButton || e.getSource() == budgetField) {   // 입력 칸에서 Enter
             recommend();
         } else if (shownAnniversary != null) {   // 정렬 칩: 이미 추천받은 상태면 바로 다시 정렬
             recommend();
@@ -312,14 +316,32 @@ public class Main extends JFrame implements ActionListener {
         // 선택된 칩 찾기
         Anniversary anniversary = anniversaries[selectedIndex(occasionChips)];
         String target = TARGETS[selectedIndex(targetChips)];
-        int budget = selectedIndex(budgetChips);
-
         int order = selectedIndex(sortChips);
 
-        ArrayList<Gift> gifts = recommender.recommend(anniversary, target, BUDGET_MAX[budget], order);
+        // 예산: 직접 입력한 값이 있으면 그걸 쓰고, 없으면 선택된 칩
+        int maxPrice;
+        String budgetName;
+        String typed = budgetField.getText().trim();
+        if (!typed.isEmpty()) {
+            try {
+                maxPrice = parseBudget(typed);
+            } catch (BudgetException ex) {   // 잘못 입력하면 추천하지 않고 이유만 보여줌
+                showBudgetError(ex.getMessage());
+                return;
+            }
+            budgetName = String.format("%,d원 이하", maxPrice);
+        } else {
+            int budget = selectedIndex(budgetChips);
+            maxPrice = BUDGET_MAX[budget];
+            budgetName = BUDGET_NAMES[budget];
+        }
+        budgetField.setError(false);
+        messageLabel.setForeground(GRAY);
+
+        ArrayList<Gift> gifts = recommender.recommend(anniversary, target, maxPrice, order);
 
         // 선택한 조건과 응원 문구 보여주기
-        conditionLabel.setText(target + "에게 주는 " + anniversary.getName() + " 선물  ·  " + BUDGET_NAMES[budget]);
+        conditionLabel.setText(target + "에게 주는 " + anniversary.getName() + " 선물  ·  " + budgetName);
         String message = anniversary.getMessage();   // 다형성: 기념일마다 다른 문구가 나옴
         if (target.equals("선생님")) {
             message = "청탁금지법 때문에 선생님께는 물건 대신 마음 선물을 추천해요.";
@@ -441,6 +463,79 @@ public class Main extends JFrame implements ActionListener {
         dialog.setContentPane(content);
         dialog.revalidate();
         dialog.repaint();
+    }
+
+    // ==================== 예산 직접 입력 ====================
+
+    /** 예산 칩 옆에 입력 칸 붙이고, 칩과 입력 칸 중 하나만 쓰이게 연결 */
+    private void setupBudgetField() {
+        budgetChips[0].getParent().add(budgetField);   // 칩들이 들어 있는 줄 맨 끝에 추가
+        budgetField.addActionListener(this);          // Enter를 누르면 바로 추천
+
+        // 칩을 누르면 → 입력 칸 비우기
+        for (Chip chip : budgetChips) {
+            chip.addActionListener(e -> {
+                budgetField.setText("");
+                budgetField.setError(false);
+            });
+        }
+
+        // 입력 칸에 글자를 쓰면 → 칩 선택 해제 / 다 지우면 → "상관없음" 다시 선택
+        ButtonGroup group = ((DefaultButtonModel) budgetChips[0].getModel()).getGroup();
+        budgetField.getDocument().addDocumentListener(new DocumentListener() {
+            public void insertUpdate(DocumentEvent e) { changed(); }
+            public void removeUpdate(DocumentEvent e) { changed(); }
+            public void changedUpdate(DocumentEvent e) { changed(); }
+
+            private void changed() {
+                budgetField.setError(false);
+                if (!budgetField.getText().isEmpty()) {
+                    group.clearSelection();
+                } else if (group.getSelection() == null) {
+                    budgetChips[budgetChips.length - 1].setSelected(true);
+                }
+            }
+        });
+    }
+
+    /**
+     * 입력한 글자를 예산(원)으로 바꾸기
+     * "25000", "25,000원", "3만", "3만원", "2만5000" 모두 가능
+     * 잘못된 값이면 BudgetException을 던짐
+     */
+    private int parseBudget(String text) throws BudgetException {
+        String clean = text.replace(",", "").replace("원", "").replace(" ", "");
+
+        long value;
+        try {
+            int man = clean.indexOf("만");
+            if (man >= 0) {   // "2만5000" → 2 × 10000 + 5000
+                String front = clean.substring(0, man);
+                String back = clean.substring(man + 1);
+                value = Long.parseLong(front) * 10000 + (back.isEmpty() ? 0 : Long.parseLong(back));
+            } else {
+                value = Long.parseLong(clean);
+            }
+        } catch (NumberFormatException e) {   // 숫자가 아닌 글자가 섞여 있으면
+            throw new BudgetException("예산은 숫자로 입력해 주세요. (예: 25000, 3만)");
+        }
+
+        if (value <= 0) {
+            throw new BudgetException("예산은 1원 이상으로 입력해 주세요.");
+        }
+        if (value > 100000000) {
+            throw new BudgetException("예산이 너무 커요. 1억 원 이하로 입력해 주세요.");
+        }
+        return (int) value;
+    }
+
+    /** 예산 입력이 잘못됐을 때 빨간 글씨로 알려주기 */
+    private void showBudgetError(String message) {
+        budgetField.setError(true);
+        conditionLabel.setText("예산을 다시 확인해 주세요");
+        messageLabel.setForeground(ACCENT);
+        messageLabel.setText(message);
+        budgetField.requestFocusInWindow();
     }
 
     /** D-day가 가장 적게 남은 기념일의 번호 찾기 (날짜가 없는 기념일은 건너뜀) */
@@ -595,6 +690,59 @@ public class Main extends JFrame implements ActionListener {
             }
             g2.dispose();
             super.paintComponent(g);
+        }
+    }
+
+    /** 예산 입력 칸 (JTextField 상속) - 비어 있으면 "직접 입력" 안내 글자, 오른쪽에 "원" */
+    static class BudgetField extends JTextField {
+        private boolean error = false;   // 잘못 입력했으면 빨간 테두리
+
+        BudgetField() {
+            setFont(new Font(FONT, Font.PLAIN, 14));
+            setForeground(TEXT);
+            setCaretColor(ACCENT);
+            setOpaque(false);
+            setBorder(new EmptyBorder(0, 14, 0, 30));   // 오른쪽은 "원" 글자 자리
+            setPreferredSize(new Dimension(120, 36));
+            addFocusListener(new java.awt.event.FocusAdapter() {   // 클릭하면 테두리 색 바꾸기
+                public void focusGained(java.awt.event.FocusEvent e) { repaint(); }
+                public void focusLost(java.awt.event.FocusEvent e) { repaint(); }
+            });
+        }
+
+        void setError(boolean error) {
+            this.error = error;
+            repaint();
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            int w = getWidth() - 1;
+            int h = getHeight() - 1;
+            boolean active = hasFocus() || !getText().isEmpty();
+
+            // 배경 + 테두리 (칩과 같은 알약 모양)
+            g2.setColor(active ? Color.WHITE : BG);
+            g2.fillRoundRect(0, 0, w, h, h, h);
+            g2.setColor(error ? ACCENT : (active ? ACCENT : LINE));
+            g2.setStroke(new BasicStroke(error ? 2f : 1f));
+            g2.drawRoundRect(0, 0, w, h, h, h);
+
+            // 안내 글자 / "원"
+            g2.setFont(getFont());
+            FontMetrics fm = g2.getFontMetrics();
+            int textY = (getHeight() + fm.getAscent() - fm.getDescent()) / 2;
+            if (getText().isEmpty() && !hasFocus()) {
+                g2.setColor(GRAY);
+                g2.drawString("직접 입력", 14, textY);
+            }
+            g2.setColor(active ? TEXT : GRAY);
+            g2.drawString("원", w - 22, textY);
+            g2.dispose();
+            super.paintComponent(g);   // 입력한 글자와 커서는 원래 JTextField가 그림
         }
     }
 
