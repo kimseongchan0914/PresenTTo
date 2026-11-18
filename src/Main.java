@@ -76,6 +76,10 @@ public class Main extends JFrame implements ActionListener {
         for (int i = 0; i < anniversaries.length; i++) {
             occasionNames[i] = anniversaries[i].getName();
             occasionDates[i] = anniversaries[i].getDate();
+            String dday = anniversaries[i].getDdayText();   // 다형성: 생일 등은 null이 나옴
+            if (dday != null) {
+                occasionDates[i] += " · " + dday;
+            }
         }
 
         // 줄마다 높이가 달라서 GridLayout 대신 위에서 아래로 쌓는 BoxLayout 사용
@@ -83,6 +87,7 @@ public class Main extends JFrame implements ActionListener {
         rows.setLayout(new BoxLayout(rows, BoxLayout.Y_AXIS));
         rows.setOpaque(false);
         rows.add(makeChipRow("기념일", occasionNames, occasionDates, occasionChips));
+        occasionChips[nearestAnniversary()].setSelected(true);   // 가장 가까운 기념일을 기본 선택
         rows.add(Box.createVerticalStrut(14));
         rows.add(makeChipRow("받는 사람", TARGETS, null, targetChips));
         rows.add(Box.createVerticalStrut(14));
@@ -268,6 +273,20 @@ public class Main extends JFrame implements ActionListener {
         cardPanel.repaint();
 
         recommendButton.setText("다른 추천 보기");   // 한 번 누른 뒤에는 버튼 글자만 바꿈
+    }
+
+    /** D-day가 가장 적게 남은 기념일의 번호 찾기 (날짜가 없는 기념일은 건너뜀) */
+    private int nearestAnniversary() {
+        int best = 0;
+        int bestLeft = Integer.MAX_VALUE;
+        for (int i = 0; i < anniversaries.length; i++) {
+            int left = anniversaries[i].getDaysLeft();
+            if (left >= 0 && left < bestLeft) {
+                best = i;
+                bestLeft = left;
+            }
+        }
+        return best;
     }
 
     /** 칩 배열에서 선택된 칩의 번호 찾기 */

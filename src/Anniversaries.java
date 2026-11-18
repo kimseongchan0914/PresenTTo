@@ -25,7 +25,19 @@ public class Anniversaries {
 /** 생일 */
 class Birthday extends Anniversary {
     public Birthday() {
-        super("생일", "사람마다 달라요");
+        super("생일");
+    }
+
+    /** 날짜가 사람마다 달라서 오버라이딩 */
+    @Override
+    public String getDate() {
+        return "사람마다 달라요";
+    }
+
+    /** D-day를 계산할 수 없으므로 -1 (오버라이딩) */
+    @Override
+    public int getDaysLeft() {
+        return -1;
     }
 
     @Override
@@ -37,7 +49,19 @@ class Birthday extends Anniversary {
 /** 커플 100일 */
 class Couple100Days extends Anniversary {
     public Couple100Days() {
-        super("커플 100일", "사귄 날 +100일");
+        super("커플 100일");
+    }
+
+    /** 날짜가 사람마다 달라서 오버라이딩 */
+    @Override
+    public String getDate() {
+        return "사귄 날 +100일";
+    }
+
+    /** D-day를 계산할 수 없으므로 -1 (오버라이딩) */
+    @Override
+    public int getDaysLeft() {
+        return -1;
     }
 
     @Override
@@ -49,7 +73,7 @@ class Couple100Days extends Anniversary {
 /** 발렌타인데이 */
 class ValentinesDay extends Anniversary {
     public ValentinesDay() {
-        super("발렌타인데이", "2월 14일");
+        super("발렌타인데이", 2, 14);
     }
 
     @Override
@@ -61,7 +85,7 @@ class ValentinesDay extends Anniversary {
 /** 화이트데이 */
 class WhiteDay extends Anniversary {
     public WhiteDay() {
-        super("화이트데이", "3월 14일");
+        super("화이트데이", 3, 14);
     }
 
     @Override
@@ -73,7 +97,7 @@ class WhiteDay extends Anniversary {
 /** 어버이날 */
 class ParentsDay extends Anniversary {
     public ParentsDay() {
-        super("어버이날", "5월 8일");
+        super("어버이날", 5, 8);
     }
 
     @Override
@@ -85,7 +109,7 @@ class ParentsDay extends Anniversary {
 /** 스승의날 */
 class TeachersDay extends Anniversary {
     public TeachersDay() {
-        super("스승의날", "5월 15일");
+        super("스승의날", 5, 15);
     }
 
     @Override
@@ -97,7 +121,7 @@ class TeachersDay extends Anniversary {
 /** 빼빼로데이 */
 class PeperoDay extends Anniversary {
     public PeperoDay() {
-        super("빼빼로데이", "11월 11일");
+        super("빼빼로데이", 11, 11);
     }
 
     @Override
@@ -109,7 +133,7 @@ class PeperoDay extends Anniversary {
 /** 크리스마스 */
 class Christmas extends Anniversary {
     public Christmas() {
-        super("크리스마스", "12월 25일");
+        super("크리스마스", 12, 25);
     }
 
     @Override
