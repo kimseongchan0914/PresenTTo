@@ -145,6 +145,7 @@ Swing 기본 부품을 상속하고 `paintComponent()`를 오버라이딩해서 
 | `BudgetField` | `JTextField` | 예산 입력 칸. "직접 입력" 안내 글자, "원" 글자, 오류일 때 빨간 테두리 |
 | `HeartButton` | `JToggleButton` | 찜하기 하트 |
 | `GiftIcon` | `JComponent` | 사각형과 원으로 그린 선물 상자 그림 (빈 카드에 사용) |
+| `EmojiPicture` | `JComponent` | 선물 그림(이모지). 맥 자바는 100px보다 큰 컬러 이모지를 못 그려서, 96px 그림으로 한 번 만든 뒤 크기를 바꿔 그립니다. (레티나 화면 대응) |
 
 ## 객체지향 개념이 쓰인 곳
 | 개념 | 어디에 |

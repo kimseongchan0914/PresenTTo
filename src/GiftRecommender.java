@@ -131,7 +131,7 @@ public class GiftRecommender {
                 new String[]{"부모님", "조부모님"}));
 
         // ===== 일반 선물 (Gift) - 빨간 카드 =====
-        gifts.add(new Gift("🥢", "빼빼로 여러 맛 세트", 6000, "여러 맛을 골라 담은 기본 선물",
+        gifts.add(new Gift("🍫", "빼빼로 여러 맛 세트", 6000, "여러 맛을 골라 담은 기본 선물",
                 new String[]{"빼빼로데이"},
                 new String[]{"친구", "연인", "썸 상대", "형제자매", "조카", "선후배", "직장 동료"}));
         gifts.add(new Gift("🍀", "합격 부적 키링", 8000, "가방에 달고 다니는 합격 부적",

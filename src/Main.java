@@ -301,9 +301,7 @@ public class Main extends JFrame implements ActionListener {
         thumb.setLayout(new BorderLayout());
         thumb.setBorder(new EmptyBorder(8, 8, 8, 6));
         thumb.add(thumbTop, BorderLayout.NORTH);
-        JLabel picture = new JLabel(gift.getEmoji(), SwingConstants.CENTER);
-        picture.setFont(new Font(EMOJI_FONT, Font.PLAIN, 54));
-        thumb.add(picture, BorderLayout.CENTER);
+        thumb.add(new EmojiPicture(gift.getEmoji(), 64), BorderLayout.CENTER);
 
         // ----- 아래: 이름 + 추천 이유 + 설명 + 가격 (카드가 좁으니 width를 정해서 길면 줄바꿈, 스윙은 px를 조금 크게 계산해서 125px) -----
         JLabel nameLabel = new JLabel("<html><div style='width:125px'>" + gift.getName() + "</div></html>");
@@ -479,8 +477,7 @@ public class Main extends JFrame implements ActionListener {
             removeBox.setOpaque(false);
             removeBox.add(remove);
 
-            JLabel picture = new JLabel(gift.getEmoji());
-            picture.setFont(new Font(EMOJI_FONT, Font.PLAIN, 26));
+            EmojiPicture picture = new EmojiPicture(gift.getEmoji(), 30);
 
             RoundPanel row = new RoundPanel(Color.WHITE, 12, true);
             row.setLayout(new BorderLayout(12, 0));
@@ -923,6 +920,59 @@ public class Main extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * 이모지 그림 (JComponent 상속)
+     *
+     * 맥의 자바는 100픽셀보다 큰 컬러 이모지를 그리지 못하고 빈칸으로 남깁니다.
+     * (레티나 화면은 2배로 그려서 54 크기만 돼도 108픽셀이 되어 사라짐)
+     * 그래서 이모지를 96픽셀 크기로 한 번 그림(BufferedImage)으로 만들어 두고,
+     * 그 그림을 원하는 크기로 줄이거나 늘려서 보여줍니다.
+     */
+    static class EmojiPicture extends JComponent {
+        private static final int SOURCE = 96;   // 미리 그려 두는 크기 (100픽셀 제한보다 작게)
+        private static final java.util.HashMap<String, java.awt.image.BufferedImage> cache = new java.util.HashMap<>();
+
+        private java.awt.image.BufferedImage image;
+        private int size;
+
+        EmojiPicture(String emoji, int size) {
+            this.size = size;
+            this.image = makeImage(emoji);
+            setPreferredSize(new Dimension(size, size));
+        }
+
+        /** 이모지를 그림으로 만들기 (같은 이모지는 한 번만 만들고 재사용) */
+        private static java.awt.image.BufferedImage makeImage(String emoji) {
+            if (cache.containsKey(emoji)) {
+                return cache.get(emoji);
+            }
+            int box = SOURCE + 24;   // 이모지가 잘리지 않게 여유 공간
+            java.awt.image.BufferedImage img = new java.awt.image.BufferedImage(box, box, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2 = img.createGraphics();
+            g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            g2.setFont(new Font(EMOJI_FONT, Font.PLAIN, SOURCE));
+            FontMetrics fm = g2.getFontMetrics();
+            int x = (box - fm.stringWidth(emoji)) / 2;
+            int y = (box + fm.getAscent() - fm.getDescent()) / 2;
+            g2.drawString(emoji, x, y);
+            g2.dispose();
+            cache.put(emoji, img);
+            return img;
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            int draw = size * image.getWidth() / SOURCE;   // 여유 공간까지 같은 비율로
+            int x = (getWidth() - draw) / 2;
+            int y = (getHeight() - draw) / 2;
+            g2.drawImage(image, x, y, draw, draw, null);
+            g2.dispose();
+        }
+    }
+
     /** 추천받기 전 빈 카드 (JPanel 상속) - 점선 테두리만 */
     static class DashedCard extends JPanel {
         DashedCard() {
@@ -978,8 +1028,7 @@ public class Main extends JFrame implements ActionListener {
             setPreferredSize(new Dimension(0, 64));
             setBorder(new EmptyBorder(0, 24, 0, 24));
 
-            JLabel icon = new JLabel("🎁");
-            icon.setFont(new Font(EMOJI_FONT, Font.PLAIN, 28));
+            EmojiPicture icon = new EmojiPicture("🎁", 30);
             JLabel title = new JLabel("준비된 선물");
             title.setFont(new Font(FONT, Font.BOLD, 20));
             title.setForeground(Color.WHITE);
