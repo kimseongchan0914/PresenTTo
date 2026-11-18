@@ -67,14 +67,14 @@ public class Main extends JFrame implements ActionListener {
 
     public Main() {
         setTitle("준비된 선물");
-        setSize(1120, 900);
-        setMinimumSize(new Dimension(1060, 840));
+        setSize(1100, 760);   // 13인치 노트북 화면에도 들어가는 크기
+        setMinimumSize(new Dimension(1080, 720));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        JPanel body = new JPanel(new BorderLayout(0, 18));
+        JPanel body = new JPanel(new BorderLayout(0, 14));
         body.setBackground(BG);
-        body.setBorder(new EmptyBorder(22, 26, 26, 26));
+        body.setBorder(new EmptyBorder(14, 16, 16, 16));
         body.add(makeSelectBox(), BorderLayout.NORTH);
         body.add(makeResultArea(), BorderLayout.CENTER);
 
@@ -107,25 +107,31 @@ public class Main extends JFrame implements ActionListener {
         rows.setOpaque(false);
         rows.add(makeChipRow("기념일", occasionNames, occasionDates, occasionChips, 7));
         occasionChips[nearestAnniversary()].setSelected(true);   // 가장 가까운 기념일을 기본 선택
-        rows.add(Box.createVerticalStrut(14));
+        rows.add(Box.createVerticalStrut(10));
         rows.add(makeChipRow("받는 사람", TARGETS, null, targetChips, 5));
-        rows.add(Box.createVerticalStrut(14));
-        rows.add(makeChipRow("예산", BUDGET_NAMES, null, budgetChips, 0));
+        rows.add(Box.createVerticalStrut(10));
+        JPanel budgetRow = makeChipRow("예산", BUDGET_NAMES, null, budgetChips, 0);
+        rows.add(budgetRow);
         setupBudgetField();
 
         recommendButton.addActionListener(this);
         wishButton.addActionListener(this);   // 두 버튼 모두 actionPerformed 하나에서 처리
 
-        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        // 버튼은 예산 줄 오른쪽 빈자리에 (세로 공간 아끼기)
+        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         buttons.setOpaque(false);
         buttons.add(wishButton);
         buttons.add(recommendButton);
+        wishButton.setPreferredSize(new Dimension(118, 36));        // 칩과 같은 높이로
+        recommendButton.setPreferredSize(new Dimension(136, 36));
+        wishButton.setMargin(new Insets(0, 0, 0, 0));               // 안쪽 여백을 없애서 글자가 잘리지 않게
+        recommendButton.setMargin(new Insets(0, 0, 0, 0));
+        budgetRow.add(buttons, BorderLayout.EAST);
 
         RoundPanel box = new RoundPanel(Color.WHITE, 22, true);
-        box.setLayout(new BorderLayout(0, 18));
-        box.setBorder(new EmptyBorder(20, 22, 22, 22));
+        box.setLayout(new BorderLayout());
+        box.setBorder(new EmptyBorder(14, 16, 16, 16));
         box.add(rows, BorderLayout.CENTER);
-        box.add(buttons, BorderLayout.SOUTH);
         return box;
     }
 
@@ -140,13 +146,13 @@ public class Main extends JFrame implements ActionListener {
         label.setForeground(TEXT);
         label.setPreferredSize(new Dimension(80, 36));
         label.setVerticalAlignment(SwingConstants.TOP);
-        label.setBorder(new EmptyBorder(subs == null ? 9 : 16, 0, 0, 0));   // 첫 줄 칩과 높이 맞추기
+        label.setBorder(new EmptyBorder(subs == null ? 9 : 13, 0, 0, 0));   // 첫 줄 칩과 높이 맞추기
 
         JPanel chipLine;
         if (columns == 0) {
             chipLine = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
         } else {
-            chipLine = new JPanel(new GridLayout(0, columns, 8, 8));   // columns개씩 줄바꿈
+            chipLine = new JPanel(new GridLayout(0, columns, 8, 6));   // columns개씩 줄바꿈
         }
         chipLine.setOpaque(false);
         ButtonGroup group = new ButtonGroup();   // 한 줄에서 하나만 선택되게
@@ -200,7 +206,7 @@ public class Main extends JFrame implements ActionListener {
 
         cardPanel.setOpaque(false);
 
-        JPanel result = new JPanel(new BorderLayout(0, 14));
+        JPanel result = new JPanel(new BorderLayout(0, 10));
         result.setOpaque(false);
         result.add(header, BorderLayout.NORTH);
         result.add(cardPanel, BorderLayout.CENTER);
@@ -669,7 +675,7 @@ public class Main extends JFrame implements ActionListener {
             setFocusPainted(false);
             setCursor(new Cursor(Cursor.HAND_CURSOR));
             updateLook();
-            setPreferredSize(new Dimension(getPreferredSize().width + 16, sub == null ? 36 : 52));
+            setPreferredSize(new Dimension(getPreferredSize().width + 16, sub == null ? 36 : 46));
             addItemListener(e -> updateLook());   // 선택 상태가 바뀔 때마다 모양 갱신
         }
 
@@ -836,14 +842,14 @@ public class Main extends JFrame implements ActionListener {
     static class Header extends JPanel {
         Header() {
             setLayout(new BorderLayout());
-            setPreferredSize(new Dimension(0, 120));
-            setBorder(new EmptyBorder(24, 30, 24, 30));
+            setPreferredSize(new Dimension(0, 84));
+            setBorder(new EmptyBorder(14, 24, 14, 24));
 
             JLabel title = new JLabel("준비된 선물");
-            title.setFont(new Font(FONT, Font.BOLD, 30));
+            title.setFont(new Font(FONT, Font.BOLD, 24));
             title.setForeground(Color.WHITE);
             JLabel subtitle = new JLabel("기념일과 받는 사람과 예산만 고르면 딱 맞는 선물을 골라 드려요");
-            subtitle.setFont(new Font(FONT, Font.PLAIN, 14));
+            subtitle.setFont(new Font(FONT, Font.PLAIN, 13));
             subtitle.setForeground(new Color(255, 235, 235));
 
             JPanel texts = new JPanel(new GridLayout(2, 1, 0, 4));
@@ -851,7 +857,7 @@ public class Main extends JFrame implements ActionListener {
             texts.add(title);
             texts.add(subtitle);
             add(texts, BorderLayout.CENTER);
-            add(new GiftIcon(new Color(255, 255, 255, 230), 64), BorderLayout.EAST);
+            add(new GiftIcon(new Color(255, 255, 255, 230), 52), BorderLayout.EAST);
         }
 
         @Override
