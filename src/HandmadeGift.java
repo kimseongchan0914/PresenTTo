@@ -8,8 +8,8 @@ import java.awt.Color;
  */
 public class HandmadeGift extends Gift {
 
-    public HandmadeGift(String name, String description, String[] occasions, String[] targets) {
-        super(name, 0, description, occasions, targets);   // 부모 생성자 호출 (가격은 0원)
+    public HandmadeGift(String emoji, String name, String description, String[] occasions, String[] targets) {
+        super(emoji, name, 0, description, occasions, targets);   // 부모 생성자 호출 (가격은 0원)
     }
 
     @Override

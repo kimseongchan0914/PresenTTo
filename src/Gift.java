@@ -10,13 +10,15 @@ import java.awt.Color;
  */
 public class Gift implements Comparable<Gift> {
 
+    private String emoji;         // 카드에 보여줄 그림 (이모지)
     private String name;          // 선물 이름
     private int price;            // 가격 (원)
     private String description;   // 한 줄 설명
     private String[] occasions;   // 어울리는 기념일들
     private String[] targets;     // 어울리는 받는 사람들
 
-    public Gift(String name, int price, String description, String[] occasions, String[] targets) {
+    public Gift(String emoji, String name, int price, String description, String[] occasions, String[] targets) {
+        this.emoji = emoji;
         this.name = name;
         this.price = price;
         this.description = description;
@@ -79,6 +81,10 @@ public class Gift implements Comparable<Gift> {
     /** 카드 연한 색 (태그 배경) */
     public Color getLightColor() {
         return Main.ACCENT_LIGHT;
+    }
+
+    public String getEmoji() {
+        return emoji;
     }
 
     public String getName() {

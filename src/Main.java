@@ -27,24 +27,27 @@ public class Main extends JFrame implements ActionListener {
     private static final int[] BUDGET_MAX = {10000, 30000, 50000, Integer.MAX_VALUE};
     // 정렬 칩 순서는 GiftRecommender.RANDOM(0) / CHEAP_FIRST(1) / EXPENSIVE_FIRST(2) 와 같음
     private static final String[] SORT_NAMES = {"랜덤", "가격 낮은 순", "가격 높은 순"};
-    private static final int CHIP_WIDTH = 84;   // 예산 칩 너비 (받는 사람 칩 한 칸과 비슷하게)
+    private static final int CHIP_WIDTH = 82;   // 예산 칩 너비 (받는 사람 칩 한 칸과 비슷하게)
 
     // 색깔 모음
-    static final Color BG = new Color(248, 246, 244);          // 배경 (연한 회색)
-    static final Color ACCENT = new Color(232, 80, 91);        // 메인 빨강
-    static final Color ACCENT_DARK = new Color(201, 55, 68);   // 진한 빨강 (마우스 올렸을 때)
-    static final Color ACCENT_LIGHT = new Color(253, 236, 236);// 연한 빨강
-    static final Color GREEN = new Color(46, 150, 104);        // 마음 선물 색
-    static final Color GREEN_LIGHT = new Color(225, 245, 235);
-    static final Color BLUE = new Color(52, 120, 220);         // 모바일 선물 색
-    static final Color BLUE_LIGHT = new Color(228, 238, 252);
-    static final Color PURPLE = new Color(128, 82, 210);       // 체험 선물 색
-    static final Color PURPLE_LIGHT = new Color(240, 233, 252);
+    static final Color BG = new Color(253, 248, 245);          // 배경 (따뜻한 크림색)
+    static final Color ACCENT = new Color(240, 84, 100);       // 메인 코랄 (기념일 / 추천 버튼)
+    static final Color ACCENT_DARK = new Color(214, 60, 80);   // 진한 코랄 (마우스 올렸을 때)
+    static final Color ACCENT_LIGHT = new Color(255, 234, 236);// 연한 코랄
+    static final Color VIOLET = new Color(118, 94, 232);       // 받는 사람 줄 색
+    static final Color TEAL = new Color(18, 158, 132);         // 예산 줄 색
+    static final Color GREEN = new Color(31, 168, 108);        // 마음 선물 색
+    static final Color GREEN_LIGHT = new Color(222, 247, 234);
+    static final Color BLUE = new Color(52, 128, 240);         // 모바일 선물 색
+    static final Color BLUE_LIGHT = new Color(226, 238, 255);
+    static final Color PURPLE = new Color(136, 90, 240);       // 체험 선물 색
+    static final Color PURPLE_LIGHT = new Color(240, 233, 255);
     static final Color TEXT = new Color(34, 34, 38);           // 기본 글자
     static final Color GRAY = new Color(122, 122, 130);        // 회색 글자
-    static final Color LINE = new Color(229, 227, 225);        // 테두리
-    static final Color HOVER = new Color(244, 242, 240);       // 선택 안 된 칩 배경 (연한 회색)
-    static final Color HOVER_DARK = new Color(234, 232, 229);  // 칩에 마우스를 올렸을 때
+    static final Color LINE = new Color(238, 230, 226);        // 테두리
+    static final Color HOVER = new Color(246, 242, 240);       // 선택 안 된 칩 배경 (연한 회색)
+    static final Color HOVER_DARK = new Color(238, 233, 230);  // 칩에 마우스를 올렸을 때
+    static final String EMOJI_FONT = "Apple Color Emoji";      // 맥 컬러 이모지 글꼴
     static final int RADIUS = 10;                              // 칩 / 버튼 / 입력 칸 모서리 둥글기
     static final String FONT = "Apple SD Gothic Neo";          // 맥 한글 글꼴
 
@@ -55,7 +58,7 @@ public class Main extends JFrame implements ActionListener {
     private Chip[] sortChips = new Chip[SORT_NAMES.length];
 
     private RoundButton recommendButton = new RoundButton("선물 추천받기", ACCENT, ACCENT_DARK, Color.WHITE);
-    private RoundButton wishButton = new RoundButton("찜 목록 (0)", Color.WHITE, HOVER, TEXT);
+    private RoundButton wishButton = new RoundButton("♥ 찜 목록 (0)", ACCENT_LIGHT, new Color(255, 222, 226), ACCENT);
     private JLabel conditionLabel = new JLabel(" ");
     private JLabel messageLabel = new JLabel(" ");
     private BudgetField budgetField = new BudgetField();   // 예산 직접 입력 칸
@@ -109,12 +112,12 @@ public class Main extends JFrame implements ActionListener {
         JPanel rows = new JPanel();
         rows.setLayout(new BoxLayout(rows, BoxLayout.Y_AXIS));
         rows.setOpaque(false);
-        rows.add(makeChipRow("기념일", occasionNames, occasionDates, occasionChips, 7));
+        rows.add(makeChipRow("📅  기념일", occasionNames, occasionDates, occasionChips, 7, ACCENT));
         occasionChips[nearestAnniversary()].setSelected(true);   // 가장 가까운 기념일을 기본 선택
         rows.add(Box.createVerticalStrut(18));
-        rows.add(makeChipRow("받는 사람", TARGETS, null, targetChips, TARGETS.length));
+        rows.add(makeChipRow("👥  받는 사람", TARGETS, null, targetChips, TARGETS.length, VIOLET));
         rows.add(Box.createVerticalStrut(18));
-        JPanel budgetRow = makeChipRow("예산", BUDGET_NAMES, null, budgetChips, 0);
+        JPanel budgetRow = makeChipRow("💰  예산", BUDGET_NAMES, null, budgetChips, 0, TEAL);
         rows.add(budgetRow);
         setupBudgetField();
 
@@ -141,12 +144,13 @@ public class Main extends JFrame implements ActionListener {
      * "기념일 [생일] [크리스마스] ..." 처럼 선택 칩 한 줄 만들기
      * subs(날짜)가 있으면 칩 아래에 작은 글자로 날짜를 보여줌
      * columns가 0이면 칩을 같은 너비로 왼쪽부터 이어 붙이고, 0보다 크면 그 개수만큼씩 칸을 나눠 배치
+     * color: 이 줄에서 선택된 칩의 색
      */
-    private JPanel makeChipRow(String title, String[] names, String[] subs, Chip[] chips, int columns) {
+    private JPanel makeChipRow(String title, String[] names, String[] subs, Chip[] chips, int columns, Color color) {
         JLabel label = new JLabel(title);
         label.setFont(new Font(FONT, Font.BOLD, 13));
-        label.setForeground(GRAY);
-        label.setPreferredSize(new Dimension(84, 34));
+        label.setForeground(TEXT);
+        label.setPreferredSize(new Dimension(100, 34));
         label.setVerticalAlignment(SwingConstants.TOP);
         label.setBorder(new EmptyBorder(subs == null ? 8 : 13, 0, 0, 0));   // 첫 줄 칩 글자와 높이 맞추기
 
@@ -160,6 +164,7 @@ public class Main extends JFrame implements ActionListener {
         ButtonGroup group = new ButtonGroup();   // 한 줄에서 하나만 선택되게
         for (int i = 0; i < names.length; i++) {
             chips[i] = new Chip(names[i], subs == null ? null : subs[i]);
+            chips[i].setColor(color);
             group.add(chips[i]);
             if (columns == 0) {
                 chips[i].setFixedWidth(CHIP_WIDTH);   // 받는 사람 칩과 같은 너비로 맞춤
@@ -266,8 +271,8 @@ public class Main extends JFrame implements ActionListener {
         // ----- 위: 그림 영역 (태그 + 하트 + 선물 그림) -----
         JLabel tag = new JLabel(tagText);
         tag.setFont(new Font(FONT, Font.BOLD, 11));
-        tag.setForeground(main);
-        RoundPanel tagBox = new RoundPanel(Color.WHITE, 8, false);
+        tag.setForeground(Color.WHITE);
+        RoundPanel tagBox = new RoundPanel(main, 8, false);   // 종류 색으로 채운 태그
         tagBox.setLayout(new BorderLayout());
         tagBox.setBorder(new EmptyBorder(3, 8, 3, 8));
         tagBox.add(tag);
@@ -291,11 +296,14 @@ public class Main extends JFrame implements ActionListener {
         thumbTop.add(tagLine, BorderLayout.WEST);
         thumbTop.add(heart, BorderLayout.EAST);
 
-        RoundPanel thumb = new RoundPanel(light, 12, false);
+        // 종류 색 그라데이션 배경 + 가운데 큰 이모지 그림
+        GradientPanel thumb = new GradientPanel(light, mix(light, main, 0.22), 12);
         thumb.setLayout(new BorderLayout());
         thumb.setBorder(new EmptyBorder(8, 8, 8, 6));
         thumb.add(thumbTop, BorderLayout.NORTH);
-        thumb.add(new GiftIcon(main, 52), BorderLayout.CENTER);
+        JLabel picture = new JLabel(gift.getEmoji(), SwingConstants.CENTER);
+        picture.setFont(new Font(EMOJI_FONT, Font.PLAIN, 54));
+        thumb.add(picture, BorderLayout.CENTER);
 
         // ----- 아래: 이름 + 추천 이유 + 설명 + 가격 (카드가 좁으니 width를 정해서 길면 줄바꿈, 스윙은 px를 조금 크게 계산해서 125px) -----
         JLabel nameLabel = new JLabel("<html><div style='width:125px'>" + gift.getName() + "</div></html>");
@@ -313,7 +321,7 @@ public class Main extends JFrame implements ActionListener {
 
         JLabel priceLabel = new JLabel(gift.getPriceText());   // 다형성: 종류마다 가격 글자가 다름
         priceLabel.setFont(new Font(FONT, Font.BOLD, 15));
-        priceLabel.setForeground(TEXT);
+        priceLabel.setForeground(main);
         priceLabel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createMatteBorder(1, 0, 0, 0, LINE), new EmptyBorder(10, 0, 0, 0)));
 
@@ -328,7 +336,7 @@ public class Main extends JFrame implements ActionListener {
         infoWithPrice.add(info, BorderLayout.CENTER);
         infoWithPrice.add(priceLabel, BorderLayout.SOUTH);
 
-        RoundPanel card = new RoundPanel(Color.WHITE, 14, true);
+        RoundPanel card = new RoundPanel(Color.WHITE, 16, true);
         card.setLayout(new BorderLayout(0, 12));
         card.setBorder(new EmptyBorder(8, 8, 14, 8));
         card.add(thumb, BorderLayout.CENTER);
@@ -384,7 +392,7 @@ public class Main extends JFrame implements ActionListener {
         ArrayList<Gift> gifts = recommender.recommend(anniversary, target, maxPrice, order);
 
         // 선택한 조건과 응원 문구 보여주기
-        conditionLabel.setText(target + "에게 주는 " + anniversary.getName() + " 선물  ·  " + budgetName);
+        conditionLabel.setText("🎁  " + target + "에게 주는 " + anniversary.getName() + " 선물  ·  " + budgetName);
         String message = anniversary.getMessage();   // 다형성: 기념일마다 다른 문구가 나옴
         if (target.equals("선생님")) {
             message = "청탁금지법 때문에 선생님께는 물건 대신 마음 선물을 추천해요.";
@@ -415,7 +423,7 @@ public class Main extends JFrame implements ActionListener {
 
     /** 찜 목록 버튼 글자를 개수에 맞게 바꾸기 */
     private void updateWishButton() {
-        wishButton.setText("찜 목록 (" + wishlist.size() + ")");
+        wishButton.setText("♥ 찜 목록 (" + wishlist.size() + ")");
     }
 
     // ==================== 찜 목록 창 ====================
@@ -471,9 +479,13 @@ public class Main extends JFrame implements ActionListener {
             removeBox.setOpaque(false);
             removeBox.add(remove);
 
+            JLabel picture = new JLabel(gift.getEmoji());
+            picture.setFont(new Font(EMOJI_FONT, Font.PLAIN, 26));
+
             RoundPanel row = new RoundPanel(Color.WHITE, 12, true);
-            row.setLayout(new BorderLayout());
-            row.setBorder(new EmptyBorder(10, 16, 12, 14));
+            row.setLayout(new BorderLayout(12, 0));
+            row.setBorder(new EmptyBorder(10, 14, 12, 14));
+            row.add(picture, BorderLayout.WEST);
             row.add(texts, BorderLayout.CENTER);
             row.add(removeBox, BorderLayout.EAST);
             row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 72));
@@ -492,7 +504,7 @@ public class Main extends JFrame implements ActionListener {
 
         JLabel total = new JLabel("총 " + wishlist.size() + "개  ·  " + String.format("%,d원", wishlist.getTotalPrice()));
         total.setFont(new Font(FONT, Font.BOLD, 17));
-        total.setForeground(TEXT);
+        total.setForeground(ACCENT);
         total.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createMatteBorder(1, 0, 0, 0, LINE), new EmptyBorder(14, 2, 0, 0)));
 
@@ -612,6 +624,14 @@ public class Main extends JFrame implements ActionListener {
         return 0;
     }
 
+    /** 두 색을 섞기 (t = 0이면 a, 1이면 b) */
+    static Color mix(Color a, Color b, double t) {
+        return new Color(
+                (int) (a.getRed() + (b.getRed() - a.getRed()) * t),
+                (int) (a.getGreen() + (b.getGreen() - a.getGreen()) * t),
+                (int) (a.getBlue() + (b.getBlue() - a.getBlue()) * t));
+    }
+
     /** 프로그램 시작점 */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Main().setVisible(true));
@@ -702,6 +722,7 @@ public class Main extends JFrame implements ActionListener {
         private String title;
         private String sub;              // 아래 작은 글자 (예: 날짜), 없으면 null
         private boolean segment = false;
+        private Color color = ACCENT;    // 선택됐을 때 색 (줄마다 다름)
 
         Chip(String title, String sub) {
             this.title = title;
@@ -722,6 +743,12 @@ public class Main extends JFrame implements ActionListener {
             setPreferredSize(d);
             setMinimumSize(d);
             setMaximumSize(d);
+        }
+
+        /** 선택됐을 때 색 바꾸기 */
+        void setColor(Color color) {
+            this.color = color;
+            repaint();
         }
 
         /** 정렬 버튼 모양으로 바꾸기 */
@@ -745,7 +772,7 @@ public class Main extends JFrame implements ActionListener {
             if (sub == null) {
                 setText(title);
             } else {   // html로 두 줄 만들기 (윗줄: 이름, 아랫줄: 작은 날짜)
-                String subColor = on ? "#FFE1E1" : "#A3A3AA";
+                String subColor = on ? "#FFFFFF" : "#A3A3AA";
                 setText("<html><center>" + title + "<br><span style='font-size:9px; font-weight:normal; color:"
                         + subColor + "'>" + sub + "</span></center></html>");
             }
@@ -763,10 +790,10 @@ public class Main extends JFrame implements ActionListener {
                     g2.fillRoundRect(0, 0, w, h, RADIUS, RADIUS);
                 }
             } else if (isSelected()) {
-                g2.setColor(ACCENT);
+                g2.setColor(color);
                 g2.fillRoundRect(0, 0, w, h, RADIUS, RADIUS);
-            } else {   // 테두리 없이 연한 회색 배경만 (선이 많으면 답답해 보여서)
-                g2.setColor(getModel().isRollover() ? HOVER_DARK : HOVER);
+            } else {   // 테두리 없이 연한 배경만 (마우스를 올리면 줄 색이 살짝 비침)
+                g2.setColor(getModel().isRollover() ? mix(Color.WHITE, color, 0.12) : HOVER);
                 g2.fillRoundRect(0, 0, w, h, RADIUS, RADIUS);
             }
             g2.dispose();
@@ -781,7 +808,7 @@ public class Main extends JFrame implements ActionListener {
         BudgetField() {
             setFont(new Font(FONT, Font.PLAIN, 13));
             setForeground(TEXT);
-            setCaretColor(ACCENT);
+            setCaretColor(TEAL);
             setOpaque(false);
             setBorder(new EmptyBorder(0, 12, 0, 26));   // 오른쪽은 "원" 글자 자리
             Dimension d = new Dimension(CHIP_WIDTH + 20, 34);
@@ -811,7 +838,7 @@ public class Main extends JFrame implements ActionListener {
             g2.setColor(active ? Color.WHITE : HOVER);
             g2.fillRoundRect(0, 0, w, h, RADIUS, RADIUS);
             if (error || active) {
-                g2.setColor(ACCENT);
+                g2.setColor(error ? ACCENT : TEAL);
                 g2.setStroke(new BasicStroke(error ? 2f : 1f));
                 g2.drawRoundRect(0, 0, w, h, RADIUS, RADIUS);
             }
@@ -873,6 +900,29 @@ public class Main extends JFrame implements ActionListener {
         }
     }
 
+    /** 둥근 그라데이션 패널 (JPanel 상속) - 왼쪽 위 → 오른쪽 아래로 색이 진해짐 */
+    static class GradientPanel extends JPanel {
+        private Color from, to;
+        private int radius;
+
+        GradientPanel(Color from, Color to, int radius) {
+            this.from = from;
+            this.to = to;
+            this.radius = radius;
+            setOpaque(false);
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setPaint(new GradientPaint(0, 0, from, getWidth(), getHeight(), to));
+            g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
+            g2.dispose();
+            super.paintComponent(g);
+        }
+    }
+
     /** 추천받기 전 빈 카드 (JPanel 상속) - 점선 테두리만 */
     static class DashedCard extends JPanel {
         DashedCard() {
@@ -921,35 +971,39 @@ public class Main extends JFrame implements ActionListener {
         }
     }
 
-    /** 맨 위 제목 띠 (JPanel 상속) - 흰 배경 + 아래 얇은 선 */
+    /** 맨 위 제목 띠 (JPanel 상속) - 코랄 → 복숭아색 그라데이션 */
     static class Header extends JPanel {
         Header() {
             setLayout(new BorderLayout(10, 0));
-            setBackground(Color.WHITE);
-            setPreferredSize(new Dimension(0, 58));
-            setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createMatteBorder(0, 0, 1, 0, LINE), new EmptyBorder(0, 24, 0, 24)));
+            setPreferredSize(new Dimension(0, 64));
+            setBorder(new EmptyBorder(0, 24, 0, 24));
 
+            JLabel icon = new JLabel("🎁");
+            icon.setFont(new Font(EMOJI_FONT, Font.PLAIN, 28));
             JLabel title = new JLabel("준비된 선물");
-            title.setFont(new Font(FONT, Font.BOLD, 19));
-            title.setForeground(TEXT);
+            title.setFont(new Font(FONT, Font.BOLD, 20));
+            title.setForeground(Color.WHITE);
             JLabel subtitle = new JLabel("기념일과 받는 사람과 예산만 고르면 딱 맞는 선물을 골라 드려요");
             subtitle.setFont(new Font(FONT, Font.PLAIN, 13));
-            subtitle.setForeground(GRAY);
+            subtitle.setForeground(new Color(255, 236, 236));
 
             JPanel texts = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
             texts.setOpaque(false);
+            texts.add(icon);
             texts.add(title);
             texts.add(subtitle);
             JPanel textBox = new JPanel(new GridBagLayout());   // 세로 가운데
             textBox.setOpaque(false);
             textBox.add(texts);
+            add(textBox, BorderLayout.WEST);
+        }
 
-            JPanel left = new JPanel(new BorderLayout(4, 0));
-            left.setOpaque(false);
-            left.add(new GiftIcon(ACCENT, 30), BorderLayout.WEST);
-            left.add(textBox, BorderLayout.CENTER);
-            add(left, BorderLayout.WEST);
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setPaint(new GradientPaint(0, 0, new Color(240, 84, 100), getWidth(), 0, new Color(255, 150, 112)));
+            g2.fillRect(0, 0, getWidth(), getHeight());
+            g2.dispose();
         }
     }
 

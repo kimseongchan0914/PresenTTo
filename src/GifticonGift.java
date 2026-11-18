@@ -8,8 +8,8 @@ import java.awt.Color;
  */
 public class GifticonGift extends Gift {
 
-    public GifticonGift(String name, int price, String description, String[] occasions, String[] targets) {
-        super(name, price, description, occasions, targets);   // 부모 생성자 호출
+    public GifticonGift(String emoji, String name, int price, String description, String[] occasions, String[] targets) {
+        super(emoji, name, price, description, occasions, targets);   // 부모 생성자 호출
     }
 
     @Override
