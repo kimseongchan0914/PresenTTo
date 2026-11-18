@@ -36,6 +36,8 @@ public class Main extends JFrame implements ActionListener {
     static final Color GREEN_LIGHT = new Color(225, 245, 235);
     static final Color BLUE = new Color(52, 120, 220);         // 모바일 선물 색
     static final Color BLUE_LIGHT = new Color(228, 238, 252);
+    static final Color PURPLE = new Color(128, 82, 210);       // 체험 선물 색
+    static final Color PURPLE_LIGHT = new Color(240, 233, 252);
     static final Color TEXT = new Color(45, 40, 38);           // 기본 글자
     static final Color GRAY = new Color(130, 120, 112);        // 회색 글자
     static final Color LINE = new Color(238, 228, 220);        // 테두리
@@ -52,7 +54,7 @@ public class Main extends JFrame implements ActionListener {
     private JLabel conditionLabel = new JLabel(" ");
     private JLabel messageLabel = new JLabel(" ");
     private BudgetField budgetField = new BudgetField();   // 예산 직접 입력 칸
-    private JPanel cardPanel = new JPanel(new GridLayout(1, 3, 16, 0));   // 선물 카드 3장이 들어갈 곳
+    private JPanel cardPanel = new JPanel(new GridLayout(1, GiftRecommender.COUNT, 12, 0));   // 선물 카드 5장이 들어갈 곳
 
     private GiftRecommender recommender = new GiftRecommender();
     private Wishlist wishlist = new Wishlist();
@@ -64,8 +66,8 @@ public class Main extends JFrame implements ActionListener {
 
     public Main() {
         setTitle("준비된 선물");
-        setSize(880, 820);
-        setMinimumSize(new Dimension(840, 780));
+        setSize(1120, 860);
+        setMinimumSize(new Dimension(1060, 800));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -210,10 +212,10 @@ public class Main extends JFrame implements ActionListener {
         showEmptyCards();
     }
 
-    /** 카드 자리에 흐린 빈 카드 3장 보여주기 (처음 화면 / 예산 오류일 때) */
+    /** 카드 자리에 흐린 빈 카드 보여주기 (처음 화면 / 예산 오류일 때) */
     private void showEmptyCards() {
         cardPanel.removeAll();
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < GiftRecommender.COUNT; i++) {
             RoundPanel card = new RoundPanel(new Color(255, 255, 255, 150), 20, false);
             card.setLayout(new BorderLayout());
             card.add(new GiftIcon(new Color(240, 225, 215), 56), BorderLayout.CENTER);
@@ -225,7 +227,7 @@ public class Main extends JFrame implements ActionListener {
 
     /** 선물 한 개를 보여주는 카드 만들기 */
     private JPanel makeGiftCard(Gift gift, int number, Anniversary anniversary) {
-        // 다형성: 선물 종류(일반 / 마음 / 모바일)마다 다른 색과 태그가 나옴 → if문 없이 처리
+        // 다형성: 선물 종류(일반 / 마음 / 모바일 / 체험)마다 다른 색과 태그가 나옴 → if문 없이 처리
         Color main = gift.getColor();
         Color light = gift.getLightColor();
         String tagText = gift.getTag(number);
@@ -233,7 +235,7 @@ public class Main extends JFrame implements ActionListener {
             tagText = "이런 것도 있어요";   // 기념일은 안 맞지만 빈자리를 채운 선물
         }
 
-        // 위쪽: 태그 + 선물 아이콘
+        // 위쪽: 태그 + 하트
         JLabel tag = new JLabel(tagText);
         tag.setFont(new Font(FONT, Font.BOLD, 12));
         tag.setForeground(main);
@@ -249,7 +251,7 @@ public class Main extends JFrame implements ActionListener {
         top.setOpaque(false);
         top.add(tagLine, BorderLayout.WEST);
 
-        // 오른쪽 위: 하트(찜하기) + 선물 아이콘
+        // 오른쪽 위: 하트(찜하기)
         HeartButton heart = new HeartButton();
         heart.setSelected(wishlist.contains(gift));   // 이미 찜한 선물이면 채워진 하트
         heart.addActionListener(e -> {
@@ -260,25 +262,21 @@ public class Main extends JFrame implements ActionListener {
             }
             updateWishButton();
         });
-        JPanel icons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 6, 0));
-        icons.setOpaque(false);
-        icons.add(heart);
-        icons.add(new GiftIcon(main, 40));
-        top.add(icons, BorderLayout.EAST);
+        top.add(heart, BorderLayout.EAST);
 
-        // 가운데: 이름 + 가격
-        JLabel nameLabel = new JLabel("<html>" + gift.getName() + "</html>");
-        nameLabel.setFont(new Font(FONT, Font.BOLD, 19));
+        // 가운데: 이름 + 가격 (카드가 좁으니 width를 정해서 길면 줄바꿈)
+        JLabel nameLabel = new JLabel("<html><div style='width:150px'>" + gift.getName() + "</div></html>");
+        nameLabel.setFont(new Font(FONT, Font.BOLD, 17));
         nameLabel.setForeground(TEXT);
 
-        JLabel priceLabel = new JLabel(gift.getPriceText());   // 다형성: 마음 선물은 가격이 다르게 나옴
-        priceLabel.setFont(new Font(FONT, Font.BOLD, 16));
+        JLabel priceLabel = new JLabel("<html><div style='width:150px'>" + gift.getPriceText() + "</div></html>");   // 다형성: 종류마다 가격 글자가 다름
+        priceLabel.setFont(new Font(FONT, Font.BOLD, 15));
         priceLabel.setForeground(main);
 
-        JPanel middle = new JPanel(new GridLayout(2, 1, 0, 4));
+        JPanel middle = new JPanel(new BorderLayout(0, 4));
         middle.setOpaque(false);
-        middle.add(nameLabel);
-        middle.add(priceLabel);
+        middle.add(nameLabel, BorderLayout.NORTH);
+        middle.add(priceLabel, BorderLayout.CENTER);
 
         // 아래: 추천 이유(카드 색, 굵게) + 설명 (html을 쓰면 자동 줄바꿈)
         String reason = gift.getReason(anniversary.getName(), shownTarget);
@@ -298,8 +296,8 @@ public class Main extends JFrame implements ActionListener {
         info.add(descLabel, BorderLayout.CENTER);
 
         RoundPanel card = new RoundPanel(Color.WHITE, 20, true);
-        card.setLayout(new BorderLayout(0, 16));
-        card.setBorder(new EmptyBorder(18, 18, 18, 18));
+        card.setLayout(new BorderLayout(0, 12));
+        card.setBorder(new EmptyBorder(16, 16, 16, 16));
         card.add(top, BorderLayout.NORTH);
         card.add(info, BorderLayout.CENTER);
         return card;
