@@ -21,7 +21,8 @@ import java.util.ArrayList;
 public class Main extends JFrame implements ActionListener {
 
     // 선택지
-    private static final String[] TARGETS = {"친구", "연인", "부모님", "조부모님", "형제자매", "선생님"};
+    private static final String[] TARGETS = {"친구", "연인", "썸 상대", "부모님", "조부모님",
+            "형제자매", "조카", "선후배", "직장 동료", "선생님"};
     private static final String[] BUDGET_NAMES = {"1만원 이하", "3만원 이하", "5만원 이하", "상관없음"};
     private static final int[] BUDGET_MAX = {10000, 30000, 50000, Integer.MAX_VALUE};
     // 정렬 칩 순서는 GiftRecommender.RANDOM(0) / CHEAP_FIRST(1) / EXPENSIVE_FIRST(2) 와 같음
@@ -66,8 +67,8 @@ public class Main extends JFrame implements ActionListener {
 
     public Main() {
         setTitle("준비된 선물");
-        setSize(1120, 860);
-        setMinimumSize(new Dimension(1060, 800));
+        setSize(1120, 900);
+        setMinimumSize(new Dimension(1060, 840));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -104,12 +105,12 @@ public class Main extends JFrame implements ActionListener {
         JPanel rows = new JPanel();
         rows.setLayout(new BoxLayout(rows, BoxLayout.Y_AXIS));
         rows.setOpaque(false);
-        rows.add(makeChipRow("기념일", occasionNames, occasionDates, occasionChips));
+        rows.add(makeChipRow("기념일", occasionNames, occasionDates, occasionChips, 7));
         occasionChips[nearestAnniversary()].setSelected(true);   // 가장 가까운 기념일을 기본 선택
         rows.add(Box.createVerticalStrut(14));
-        rows.add(makeChipRow("받는 사람", TARGETS, null, targetChips));
+        rows.add(makeChipRow("받는 사람", TARGETS, null, targetChips, 5));
         rows.add(Box.createVerticalStrut(14));
-        rows.add(makeChipRow("예산", BUDGET_NAMES, null, budgetChips));
+        rows.add(makeChipRow("예산", BUDGET_NAMES, null, budgetChips, 0));
         setupBudgetField();
 
         recommendButton.addActionListener(this);
@@ -130,9 +131,10 @@ public class Main extends JFrame implements ActionListener {
 
     /**
      * "기념일 [생일] [크리스마스] ..." 처럼 선택 칩 한 줄 만들기
-     * subs(날짜)가 있으면 칩 아래에 작은 글자로 날짜를 보여주고, 4칸씩 줄을 나눠 배치
+     * subs(날짜)가 있으면 칩 아래에 작은 글자로 날짜를 보여줌
+     * columns가 0이면 한 줄로 이어 붙이고, 0보다 크면 그 개수만큼씩 줄을 나눠 배치
      */
-    private JPanel makeChipRow(String title, String[] names, String[] subs, Chip[] chips) {
+    private JPanel makeChipRow(String title, String[] names, String[] subs, Chip[] chips, int columns) {
         JLabel label = new JLabel(title);
         label.setFont(new Font(FONT, Font.BOLD, 14));
         label.setForeground(TEXT);
@@ -141,10 +143,10 @@ public class Main extends JFrame implements ActionListener {
         label.setBorder(new EmptyBorder(subs == null ? 9 : 16, 0, 0, 0));   // 첫 줄 칩과 높이 맞추기
 
         JPanel chipLine;
-        if (subs == null) {
+        if (columns == 0) {
             chipLine = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
         } else {
-            chipLine = new JPanel(new GridLayout(0, 4, 8, 8));   // 4개씩 줄바꿈
+            chipLine = new JPanel(new GridLayout(0, columns, 8, 8));   // columns개씩 줄바꿈
         }
         chipLine.setOpaque(false);
         ButtonGroup group = new ButtonGroup();   // 한 줄에서 하나만 선택되게
