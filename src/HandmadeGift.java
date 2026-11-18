@@ -18,7 +18,7 @@ public class HandmadeGift extends Gift {
     }
 
     @Override
-    public String getTag(int number) {
+    public String getTag() {
         return "마음 선물";
     }
 

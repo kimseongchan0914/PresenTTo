@@ -18,7 +18,7 @@ public class GifticonGift extends Gift {
     }
 
     @Override
-    public String getTag(int number) {
+    public String getTag() {
         return "모바일 선물";
     }
 

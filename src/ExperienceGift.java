@@ -14,7 +14,7 @@ public class ExperienceGift extends Gift {
     }
 
     @Override
-    public String getTag(int number) {
+    public String getTag() {
         return "체험 선물";
     }
 

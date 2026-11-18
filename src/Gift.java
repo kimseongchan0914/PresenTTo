@@ -57,7 +57,7 @@ public class Gift implements Comparable<Gift> {
 
     /** 화면에 보여줄 가격 글자 (자식 클래스에서 오버라이딩 가능) */
     public String getPriceText() {
-        return price + "원";
+        return String.format("%,d원", price);   // 25000 → "25,000원"
     }
 
     /** 가격 비교 (Comparable 인터페이스의 메소드) - 싼 선물이 앞으로 */
@@ -66,9 +66,9 @@ public class Gift implements Comparable<Gift> {
         return Integer.compare(price, other.price);
     }
 
-    /** 카드 왼쪽 위 태그 글자 (일반 선물은 "추천 1" 같은 번호) */
-    public String getTag(int number) {
-        return "추천 " + number;
+    /** 카드 왼쪽 위 태그 글자 (선물 종류 이름) */
+    public String getTag() {
+        return "일반 선물";
     }
 
     /** 카드 진한 색 (태그 글자 / 가격 / 아이콘) */
