@@ -54,6 +54,7 @@ public class Main extends JFrame implements ActionListener {
     // 지금 화면에 보이는 카드 정보 (찜 목록을 닫은 뒤 하트를 다시 그릴 때 사용)
     private ArrayList<Gift> shownGifts = new ArrayList<>();
     private Anniversary shownAnniversary;
+    private String shownTarget;
 
     public Main() {
         setTitle("준비된 선물");
@@ -242,8 +243,12 @@ public class Main extends JFrame implements ActionListener {
         middle.add(nameLabel);
         middle.add(priceLabel);
 
-        // 아래: 설명 (html을 쓰면 자동 줄바꿈)
-        JLabel descLabel = new JLabel("<html><div style='line-height:1.4'>" + gift.getDescription() + "</div></html>");
+        // 아래: 추천 이유(카드 색, 굵게) + 설명 (html을 쓰면 자동 줄바꿈)
+        String reason = gift.getReason(anniversary.getName(), shownTarget);
+        String color = String.format("#%06X", main.getRGB() & 0xFFFFFF);   // Color → "#3478DC" 같은 글자
+        JLabel descLabel = new JLabel("<html><div style='line-height:1.4'>"
+                + "<b style='color:" + color + "'>" + reason + "</b><br>"
+                + gift.getDescription() + "</div></html>");
         descLabel.setFont(new Font(FONT, Font.PLAIN, 13));
         descLabel.setForeground(GRAY);
         descLabel.setVerticalAlignment(SwingConstants.TOP);
@@ -297,6 +302,7 @@ public class Main extends JFrame implements ActionListener {
 
         shownGifts = gifts;
         shownAnniversary = anniversary;
+        shownTarget = target;
         showCards();
 
         recommendButton.setText("다른 추천 보기");   // 한 번 누른 뒤에는 버튼 글자만 바꿈

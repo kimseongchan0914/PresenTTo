@@ -43,6 +43,17 @@ public class Gift {
         return false;
     }
 
+    /**
+     * 추천 이유 한 줄 (예: "연인 · 생일에 딱 맞아요")
+     * 받는 사람은 추천할 때 이미 걸러졌으니, 기념일이 맞는지에 따라 문장이 달라짐
+     */
+    public String getReason(String occasion, String target) {
+        if (fitsOccasion(occasion)) {
+            return target + " · " + occasion + "에 딱 맞아요";
+        }
+        return occasion + " 선물은 아니지만 " + target + "에게 잘 어울려요";
+    }
+
     /** 화면에 보여줄 가격 글자 (자식 클래스에서 오버라이딩 가능) */
     public String getPriceText() {
         return price + "원";
