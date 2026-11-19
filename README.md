@@ -2,7 +2,7 @@
 
 기념일, 받는 사람, 예산만 고르면 딱 맞는 선물 5개를 추천해 주는 Java Swing 프로그램입니다.
 
-**발표 자료 사이트**: https://claude.ai/artifact/D2GxzY4rvShU1JUqypcRu2
+**발표 자료**: https://claude.ai/artifact/WnxhUwVhMCaJAYJSmieKw4
 
 ## 실행 방법
 JDK 21 이상이 필요합니다.
