@@ -11,16 +11,9 @@ public class Anniversaries {
         return new Anniversary[] {
                 new Birthday(),
                 new Couple100Days(),
-                new CoupleAnniversary(),
                 new Graduation(),
-                new Promotion(),
-                new LunarNewYear(),
-                new ValentinesDay(),
-                new WhiteDay(),
-                new ChildrensDay(),
                 new ParentsDay(),
                 new TeachersDay(),
-                new ExamDay(),
                 new PeperoDay(),
                 new Christmas()
         };
@@ -52,18 +45,6 @@ class Couple100Days extends Anniversary {
     }
 }
 
-/** 커플 1주년 */
-class CoupleAnniversary extends Anniversary {
-    public CoupleAnniversary() {
-        super("커플 1주년");
-    }
-
-    @Override
-    public String getMessage() {
-        return "함께한 1년을 돌아보며 오래 간직할 선물을 골라 보세요.";
-    }
-}
-
 /** 졸업·입학 */
 class Graduation extends Anniversary {
     public Graduation() {
@@ -73,79 +54,6 @@ class Graduation extends Anniversary {
     @Override
     public String getMessage() {
         return "새로운 출발을 응원하는 마음을 담아 보세요!";
-    }
-}
-
-/** 승진·이직 */
-class Promotion extends Anniversary {
-    public Promotion() {
-        super("승진·이직");
-    }
-
-    @Override
-    public String getMessage() {
-        return "새 자리에서도 잘 해낼 거라는 응원을 전해 보세요.";
-    }
-}
-
-/** 설날 */
-class LunarNewYear extends Anniversary {
-    public LunarNewYear() {
-        super("설날");
-    }
-
-    @Override
-    public String getMessage() {
-        return "새해 복 많이 받으시라는 마음을 담아 보세요!";
-    }
-}
-
-/** 수능 응원 */
-class ExamDay extends Anniversary {
-    public ExamDay() {
-        super("수능 응원");
-    }
-
-    @Override
-    public String getMessage() {
-        return "그동안의 노력이 빛나길! 든든한 응원을 보내 보세요.";
-    }
-}
-
-
-/** 발렌타인데이 */
-class ValentinesDay extends Anniversary {
-    public ValentinesDay() {
-        super("발렌타인데이");
-    }
-
-    @Override
-    public String getMessage() {
-        return "달콤한 초콜릿과 함께 좋아하는 마음을 전해 보세요!";
-    }
-}
-
-/** 화이트데이 */
-class WhiteDay extends Anniversary {
-    public WhiteDay() {
-        super("화이트데이");
-    }
-
-    @Override
-    public String getMessage() {
-        return "받은 마음에 사탕처럼 달콤하게 답해 보세요!";
-    }
-}
-
-/** 어린이날 */
-class ChildrensDay extends Anniversary {
-    public ChildrensDay() {
-        super("어린이날");
-    }
-
-    @Override
-    public String getMessage() {
-        return "아이들이 신나게 웃을 수 있는 선물을 골라 보세요!";
     }
 }
 

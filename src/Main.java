@@ -12,7 +12,7 @@ import java.util.ArrayList;
  *
  * JFrame을 상속(extends)해서 창을 만들고
  * ActionListener 인터페이스를 구현(implements)해서 버튼 클릭을 처리합니다.
- * 화면을 예쁘게 만들기 위한 부품(둥근 패널 / 둥근 버튼 / 선택 칩 / 선물 아이콘)은
+ * 화면을 예쁘게 만들기 위한 부품(둥근 패널 / 둥근 버튼 / 선택 칩 / 이모지 그림)은
  * 아래쪽에 Swing 클래스를 상속한 작은 클래스로 만들었습니다.
  */
 public class Main extends JFrame implements ActionListener {
@@ -27,11 +27,10 @@ public class Main extends JFrame implements ActionListener {
     // 색깔 모음
     static final Color BG = new Color(253, 248, 245);          // 배경 (따뜻한 크림색)
     static final Color ACCENT = new Color(240, 84, 100);       // 메인 코랄 (기념일 / 추천 버튼)
-    static final Color ACCENT_DARK = new Color(214, 60, 80);   // 진한 코랄 (마우스 올렸을 때)
     static final Color ACCENT_LIGHT = new Color(255, 234, 236);// 연한 코랄
+    static final Color ACCENT_DARK = new Color(214, 60, 80);   // 진한 코랄 (마우스 올렸을 때)
     static final Color VIOLET = new Color(118, 94, 232);       // 받는 사람 줄 색
     static final Color TEAL = new Color(18, 158, 132);         // 예산 줄 색
-    static final Color VIOLET_LIGHT = new Color(238, 234, 253);
     static final Color GREEN = new Color(31, 168, 108);        // 마음 선물 색
     static final Color GREEN_LIGHT = new Color(222, 247, 234);
     static final Color BLUE = new Color(52, 128, 240);         // 모바일 선물 색
@@ -42,7 +41,6 @@ public class Main extends JFrame implements ActionListener {
     static final Color GRAY = new Color(122, 122, 130);        // 회색 글자
     static final Color LINE = new Color(238, 230, 226);        // 테두리
     static final Color HOVER = new Color(246, 242, 240);       // 선택 안 된 칩 배경 (연한 회색)
-    static final Color HOVER_DARK = new Color(238, 233, 230);  // 칩에 마우스를 올렸을 때
     static final String EMOJI_FONT = "Apple Color Emoji";      // 맥 컬러 이모지 글꼴
     static final int RADIUS = 10;                              // 칩 / 버튼 / 입력 칸 모서리 둥글기
     static final String FONT = "Apple SD Gothic Neo";          // 맥 한글 글꼴
@@ -52,7 +50,7 @@ public class Main extends JFrame implements ActionListener {
     private Chip[] targetChips = new Chip[TARGETS.length];
     private Chip[] budgetChips = new Chip[BUDGET_NAMES.length];
 
-    private RoundButton recommendButton = new RoundButton("선물 추천받기", ACCENT, ACCENT_DARK, Color.WHITE);
+    private RoundButton recommendButton = new RoundButton("다른 추천 보기", ACCENT, ACCENT_DARK, Color.WHITE);
     private JLabel conditionLabel = new JLabel(" ");
     private JLabel messageLabel = new JLabel(" ");
 
@@ -83,7 +81,7 @@ public class Main extends JFrame implements ActionListener {
         main.add(body, BorderLayout.CENTER);
         add(main);
 
-        showEmpty();
+        recommend();   // 처음부터 추천 결과를 보여줌
     }
 
     // ==================== 화면 만들기 ====================
@@ -183,26 +181,6 @@ public class Main extends JFrame implements ActionListener {
         result.add(textPanel, BorderLayout.NORTH);
         result.add(cardPanel, BorderLayout.CENTER);
         return result;
-    }
-
-    /** 아직 추천받기 전 화면 */
-    private void showEmpty() {
-        conditionLabel.setText("어떤 선물이 좋을까요?");
-        messageLabel.setText("위에서 조건을 고르고 [선물 추천받기]를 눌러 보세요.");
-        showEmptyCards();
-    }
-
-    /** 카드 자리에 흐린 빈 카드 보여주기 (처음 화면 / 예산 오류일 때) */
-    private void showEmptyCards() {
-        cardPanel.removeAll();
-        for (int i = 0; i < GiftRecommender.COUNT; i++) {
-            JPanel card = new DashedCard();
-            card.setLayout(new BorderLayout());
-            card.add(new GiftIcon(new Color(226, 223, 220), 40), BorderLayout.CENTER);
-            cardPanel.add(card);
-        }
-        cardPanel.revalidate();
-        cardPanel.repaint();
     }
 
     /**
@@ -337,9 +315,6 @@ public class Main extends JFrame implements ActionListener {
         shownAnniversary = anniversary;
         shownTarget = target;
         showCards();
-
-        // 한 번 누른 뒤에는 버튼 글자만 바꿈 (누를 때마다 다른 선물이 나옴)
-        recommendButton.setText("다른 추천 보기");
     }
 
     /** 선물 카드 다시 채우기 */
@@ -588,54 +563,6 @@ public class Main extends JFrame implements ActionListener {
             int x = (getWidth() - draw) / 2;
             int y = (getHeight() - draw) / 2;
             g2.drawImage(image, x, y, draw, draw, null);
-            g2.dispose();
-        }
-    }
-
-    /** 추천받기 전 빈 카드 (JPanel 상속) - 점선 테두리만 */
-    static class DashedCard extends JPanel {
-        DashedCard() {
-            setOpaque(false);
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(new Color(222, 219, 216));
-            g2.setStroke(new BasicStroke(1.2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1f, new float[]{6f, 5f}, 0f));
-            g2.drawRoundRect(1, 1, getWidth() - 3, getHeight() - 3, 14, 14);
-            g2.dispose();
-        }
-    }
-
-    /** 선물 상자 그림 (JComponent 상속) - 사각형과 원으로 직접 그림 */
-    static class GiftIcon extends JComponent {
-        private Color color;
-        private int size;
-
-        GiftIcon(Color color, int size) {
-            this.color = color;
-            this.size = size;
-            setPreferredSize(new Dimension(size, size));
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            int s = size;
-            int x = (getWidth() - s) / 2;
-            int y = (getHeight() - s) / 2;
-            Color ribbon = color.darker();
-
-            g2.setColor(color);
-            g2.fillRoundRect(x + s / 8, y + s * 7 / 16, s * 3 / 4, s / 2, s / 8, s / 8);   // 상자 몸통
-            g2.fillRoundRect(x + s / 16, y + s * 5 / 16, s * 7 / 8, s / 6, s / 8, s / 8);  // 뚜껑
-            g2.setColor(ribbon);
-            g2.fillRect(x + s * 7 / 16, y + s * 5 / 16, s / 8, s * 5 / 8);                  // 세로 리본
-            g2.fillOval(x + s / 4, y + s / 8, s / 4, s / 5);                                // 리본 왼쪽 고리
-            g2.fillOval(x + s / 2, y + s / 8, s / 4, s / 5);                                // 리본 오른쪽 고리
             g2.dispose();
         }
     }
