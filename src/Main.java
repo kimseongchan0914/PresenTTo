@@ -18,11 +18,10 @@ import java.util.ArrayList;
 public class Main extends JFrame implements ActionListener {
 
     // 선택지
-    private static final String[] TARGETS = {"친구", "연인", "썸 상대", "부모님", "조부모님",
-            "형제자매", "조카", "선후배", "직장 동료", "선생님"};
+    private static final String[] TARGETS = {"친구", "연인", "부모님", "형제자매", "선생님"};
     private static final String[] BUDGET_NAMES = {"1만원 이하", "3만원 이하", "5만원 이하", "상관없음"};
     private static final int[] BUDGET_MAX = {10000, 30000, 50000, Integer.MAX_VALUE};
-    private static final int CHIP_WIDTH = 82;   // 예산 칩 너비 (받는 사람 칩 한 칸과 비슷하게)
+    private static final int CHIP_WIDTH = 82;   // 받는 사람 / 예산 칩 너비
 
     // 색깔 모음
     static final Color BG = new Color(253, 248, 245);          // 배경 (따뜻한 크림색)
@@ -99,7 +98,7 @@ public class Main extends JFrame implements ActionListener {
         rows.setOpaque(false);
         rows.add(makeChipRow("📅  기념일", occasionNames, occasionChips, 7, ACCENT));
         rows.add(Box.createVerticalStrut(18));
-        rows.add(makeChipRow("👥  받는 사람", TARGETS, targetChips, TARGETS.length, VIOLET));
+        rows.add(makeChipRow("👥  받는 사람", TARGETS, targetChips, 0, VIOLET));
         rows.add(Box.createVerticalStrut(18));
         JPanel budgetRow = makeChipRow("💰  예산", BUDGET_NAMES, budgetChips, 0, TEAL);
         rows.add(budgetRow);
@@ -146,7 +145,7 @@ public class Main extends JFrame implements ActionListener {
             chips[i].setColor(color);
             group.add(chips[i]);
             if (columns == 0) {
-                chips[i].setFixedWidth(CHIP_WIDTH);   // 받는 사람 칩과 같은 너비로 맞춤
+                chips[i].setFixedWidth(CHIP_WIDTH);   // 칩 너비를 똑같이 맞춤
                 if (i > 0) {
                     chipLine.add(Box.createHorizontalStrut(8));
                 }
