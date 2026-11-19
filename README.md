@@ -18,7 +18,7 @@ IntelliJ IDEA에서는 프로젝트를 열고 `Main`을 실행하면 됩니다.
 > **macOS에서 실행하는 것을 권장합니다.** 자세한 내용은 [참고](#참고)를 보세요.
 
 ## 사용 방법
-1. **기념일**을 고릅니다. 처음에는 오늘에서 가장 가까운 기념일이 선택되어 있습니다.
+1. **기념일**을 고릅니다.
 2. **받는 사람**과 **예산**을 고릅니다.
 3. **[선물 추천받기]**를 누르면 선물 카드 5장이 나옵니다. 다시 누르면 다른 선물이 나옵니다.
 
@@ -29,7 +29,7 @@ IntelliJ IDEA에서는 프로젝트를 열고 `Main`을 실행하면 됩니다.
 │ 🎁 준비된 선물   기념일과 받는 사람과 예산만 고르면 …            │  헤더 (그라데이션)
 ├────────────────────────────────────────────────────────────────┤
 │ ┌────────────────────────────────────────────────────────────┐ │
-│ │ 📅 기념일    [생일] [커플 100일] … (7개씩 2줄, 아래에 날짜)  │ │
+│ │ 📅 기념일    [생일] [커플 100일] … (7개씩 2줄)              │ │
 │ │ 👥 받는 사람 [친구] [연인] [썸 상대] … (10개 한 줄)          │ │  조건 고르기
 │ │ 💰 예산      [1만원 이하] … [상관없음]                [추천] │ │
 │ └────────────────────────────────────────────────────────────┘ │
@@ -60,9 +60,6 @@ IntelliJ IDEA에서는 프로젝트를 열고 `Main`을 실행하면 됩니다.
 | 기념일 (14종) | 생일 · 커플 100일 · 커플 1주년 · 졸업·입학 · 승진·이직 · 설날 · 발렌타인데이 · 화이트데이 · 어린이날 · 어버이날 · 스승의날 · 수능 응원 · 빼빼로데이 · 크리스마스 |
 | 받는 사람 (10종) | 친구 · 연인 · 썸 상대 · 부모님 · 조부모님 · 형제자매 · 조카 · 선후배 · 직장 동료 · 선생님 |
 | 예산 | 1만원 이하 · 3만원 이하 · 5만원 이하 · 상관없음 |
-
-- 기념일 칩 아래에 날짜와 D-day가 나옵니다. 예: `12월 25일 · D-37`
-  - 생일, 설날처럼 날짜가 사람이나 해마다 다른 기념일은 안내 글자만 나옵니다. 예: `사람마다 달라요`
 
 ### 추천 결과
 - 선물 89종 중에서 최대 5개를 추천합니다.
@@ -102,11 +99,7 @@ Gift (일반 선물)
  └─ ExperienceGift (체험 선물)
 
 Anniversary (추상 클래스)
- ├─ ValentinesDay, WhiteDay, ChildrensDay, ParentsDay,
- │  TeachersDay, PeperoDay, Christmas        (날짜가 정해진 기념일)
- └─ FlexibleAnniversary (추상 클래스)       (날짜가 다른 기념일)
-     └─ Birthday, Couple100Days, CoupleAnniversary,
-        Graduation, Promotion, LunarNewYear, ExamDay
+ └─ Birthday, Couple100Days, Christmas … (기념일 14종)
 
 
 Main ─ 사용 ─▶ GiftRecommender
@@ -120,8 +113,7 @@ Main ─ 사용 ─▶ GiftRecommender
 | `HandmadeGift` | 0원짜리 마음 선물입니다. 가격 글자, 태그, 색을 오버라이딩합니다. |
 | `GifticonGift` | 모바일 선물입니다. `super.getPriceText()` 뒤에 "바로 전송"을 붙이고, 태그와 색을 오버라이딩합니다. |
 | `ExperienceGift` | 체험 선물입니다. 가격 글자는 부모 것을 그대로 쓰고, 태그와 색을 오버라이딩합니다. |
-| `Anniversary` | 기념일 추상 클래스입니다. 이름, 날짜, D-day 계산, 응원 문구(추상 메소드)를 가집니다. |
-| `FlexibleAnniversary` | 날짜가 다른 기념일의 중간 부모 클래스입니다. D-day를 계산하지 않습니다. |
+| `Anniversary` | 기념일 추상 클래스입니다. 이름과 응원 문구(추상 메소드)를 가집니다. |
 | `Anniversaries` | 기념일 14종을 만들어 `Anniversary[]`로 돌려줍니다. 각 기념일 자식 클래스도 이 파일에 있습니다. |
 
 ### 화면 부품 (`Main` 안의 클래스)
@@ -134,7 +126,7 @@ Swing 기본 부품을 상속하고 `paintComponent()`를 오버라이딩해서 
 | `GradientPanel` | `JPanel` | 둥근 그라데이션 상자. 카드 위쪽 그림 영역에 씁니다. |
 | `DashedCard` | `JPanel` | 추천받기 전 점선 빈 카드 |
 | `RoundButton` | `JButton` | 둥근 버튼 (선물 추천받기) |
-| `Chip` | `JToggleButton` | 선택 칩. 줄마다 선택 색이 다르고, 날짜를 아래에 보여 주는 두 줄 칩도 됩니다. |
+| `Chip` | `JToggleButton` | 선택 칩. 줄마다 선택 색이 다릅니다. |
 | `GiftIcon` | `JComponent` | 사각형과 원으로 그린 선물 상자 그림 (빈 카드에 사용) |
 | `EmojiPicture` | `JComponent` | 선물 그림(이모지). 맥 자바는 100px보다 큰 컬러 이모지를 못 그려서, 96px 그림으로 한 번 만든 뒤 크기를 바꿔 그립니다. (레티나 화면 대응) |
 
@@ -142,14 +134,14 @@ Swing 기본 부품을 상속하고 `paintComponent()`를 오버라이딩해서 
 | 개념 | 어디에 |
 | --- | --- |
 | **캡슐화** | `Gift`의 필드는 모두 `private`이고 getter와 메소드로만 다룹니다. |
-| **상속** | `Gift`를 상속한 선물 3종, `Anniversary` → `FlexibleAnniversary` → `Birthday`의 3단계 상속, `Main extends JFrame` |
-| **추상 클래스** | `Anniversary`, `FlexibleAnniversary`. `getMessage()`는 추상 메소드라 자식이 꼭 구현합니다. |
+| **상속** | `Gift`를 상속한 선물 3종, `Anniversary`를 상속한 기념일 14종, `Main extends JFrame` |
+| **추상 클래스** | `Anniversary`. `getMessage()`는 추상 메소드라 자식이 꼭 구현합니다. |
 | **오버라이딩** | 선물 종류마다 `getTag()`, `getColor()`, `getPriceText()`를 다르게 구현합니다. 기념일마다 `getMessage()`를 다르게 구현합니다. 화면 부품은 `paintComponent()`를 오버라이딩해서 직접 그립니다. |
 | **다형성** | `Main`은 `Gift`와 `Anniversary` 타입으로만 다룹니다. if문 없이 `gift.getColor()`나 `anniversary.getMessage()`를 부르면 객체에 맞는 결과가 나옵니다. |
 | **인터페이스** | `ActionListener`로 버튼 클릭을 처리합니다. |
 
 ## 참고
-- **규모**: 자바 파일 9개, 선물 89가지, 기념일 14가지, 받는 사람 10가지
+- **규모**: 자바 파일 8개, 선물 89가지, 기념일 14가지, 받는 사람 10가지
 - **macOS 권장**: 글꼴(Apple SD Gothic Neo)과 선물 그림(Apple Color Emoji)이 맥 기준입니다. 윈도우에서는 선물 그림이 네모로 보일 수 있습니다.
 - **레티나 화면 대응**: 맥 자바는 100px보다 큰 컬러 이모지를 빈칸으로 그립니다. 레티나 화면은 2배로 그려서 카드 그림이 사라지기 때문에, `EmojiPicture`가 이모지를 96px 그림으로 한 번 만든 뒤 줄여서 그립니다.
 - **선물 추가 방법**: `GiftRecommender` 생성자에 한 줄을 넣으면 됩니다.
@@ -158,7 +150,7 @@ Swing 기본 부품을 상속하고 `paintComponent()`를 오버라이딩해서 
   gifts.add(new Gift("🧦", "양말 세트", 9000, "귀여운 무늬 양말로 가볍게 마음 전하기",
           new String[]{"생일"}, new String[]{"친구", "연인"}));
   ```
-- **기념일 추가 방법**: `Anniversary`(날짜가 정해진 기념일)나 `FlexibleAnniversary`(날짜가 다른 기념일)를 상속한 클래스를 만들고 `Anniversaries.getAll()`에 넣으면 됩니다.
+- **기념일 추가 방법**: `Anniversary`를 상속하고 `getMessage()`를 오버라이딩한 클래스를 만들고 `Anniversaries.getAll()`에 넣으면 됩니다.
 
 ## 파일 구성
 ```
@@ -170,6 +162,5 @@ src/
 ├── GifticonGift.java         모바일 선물
 ├── ExperienceGift.java       체험 선물
 ├── Anniversary.java          기념일 추상 클래스
-├── FlexibleAnniversary.java  날짜가 다른 기념일
 └── Anniversaries.java        기념일 14종
 ```

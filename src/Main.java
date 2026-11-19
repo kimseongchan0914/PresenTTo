@@ -91,26 +91,19 @@ public class Main extends JFrame implements ActionListener {
     /** 조건 고르는 흰색 상자 (기념일 / 받는 사람 / 예산 + 버튼) */
     private JPanel makeSelectBox() {
         String[] occasionNames = new String[anniversaries.length];
-        String[] occasionDates = new String[anniversaries.length];
         for (int i = 0; i < anniversaries.length; i++) {
             occasionNames[i] = anniversaries[i].getName();
-            occasionDates[i] = anniversaries[i].getDate();
-            String dday = anniversaries[i].getDdayText();   // 다형성: 생일 등은 null이 나옴
-            if (dday != null) {
-                occasionDates[i] += " · " + dday;
-            }
         }
 
         // 줄마다 높이가 달라서 GridLayout 대신 위에서 아래로 쌓는 BoxLayout 사용
         JPanel rows = new JPanel();
         rows.setLayout(new BoxLayout(rows, BoxLayout.Y_AXIS));
         rows.setOpaque(false);
-        rows.add(makeChipRow("📅  기념일", occasionNames, occasionDates, occasionChips, 7, ACCENT));
-        occasionChips[nearestAnniversary()].setSelected(true);   // 가장 가까운 기념일을 기본 선택
+        rows.add(makeChipRow("📅  기념일", occasionNames, occasionChips, 7, ACCENT));
         rows.add(Box.createVerticalStrut(18));
-        rows.add(makeChipRow("👥  받는 사람", TARGETS, null, targetChips, TARGETS.length, VIOLET));
+        rows.add(makeChipRow("👥  받는 사람", TARGETS, targetChips, TARGETS.length, VIOLET));
         rows.add(Box.createVerticalStrut(18));
-        JPanel budgetRow = makeChipRow("💰  예산", BUDGET_NAMES, null, budgetChips, 0, TEAL);
+        JPanel budgetRow = makeChipRow("💰  예산", BUDGET_NAMES, budgetChips, 0, TEAL);
         rows.add(budgetRow);
 
         recommendButton.addActionListener(this);   // 클릭하면 actionPerformed()가 실행됨
@@ -131,17 +124,16 @@ public class Main extends JFrame implements ActionListener {
 
     /**
      * "기념일 [생일] [크리스마스] ..." 처럼 선택 칩 한 줄 만들기
-     * subs(날짜)가 있으면 칩 아래에 작은 글자로 날짜를 보여줌
      * columns가 0이면 칩을 같은 너비로 왼쪽부터 이어 붙이고, 0보다 크면 그 개수만큼씩 칸을 나눠 배치
      * color: 이 줄에서 선택된 칩의 색
      */
-    private JPanel makeChipRow(String title, String[] names, String[] subs, Chip[] chips, int columns, Color color) {
+    private JPanel makeChipRow(String title, String[] names, Chip[] chips, int columns, Color color) {
         JLabel label = new JLabel(title);
         label.setFont(new Font(FONT, Font.BOLD, 13));
         label.setForeground(TEXT);
         label.setPreferredSize(new Dimension(100, 34));
         label.setVerticalAlignment(SwingConstants.TOP);
-        label.setBorder(new EmptyBorder(subs == null ? 8 : 13, 0, 0, 0));   // 첫 줄 칩 글자와 높이 맞추기
+        label.setBorder(new EmptyBorder(8, 0, 0, 0));   // 첫 줄 칩 글자와 높이 맞추기
 
         JPanel chipLine = new JPanel();
         if (columns == 0) {
@@ -152,7 +144,7 @@ public class Main extends JFrame implements ActionListener {
         chipLine.setOpaque(false);
         ButtonGroup group = new ButtonGroup();   // 한 줄에서 하나만 선택되게
         for (int i = 0; i < names.length; i++) {
-            chips[i] = new Chip(names[i], subs == null ? null : subs[i]);
+            chips[i] = new Chip(names[i]);
             chips[i].setColor(color);
             group.add(chips[i]);
             if (columns == 0) {
@@ -360,20 +352,6 @@ public class Main extends JFrame implements ActionListener {
         cardPanel.repaint();
     }
 
-    /** D-day가 가장 적게 남은 기념일의 번호 찾기 (날짜가 없는 기념일은 건너뜀) */
-    private int nearestAnniversary() {
-        int best = 0;
-        int bestLeft = Integer.MAX_VALUE;
-        for (int i = 0; i < anniversaries.length; i++) {
-            int left = anniversaries[i].getDaysLeft();
-            if (left >= 0 && left < bestLeft) {
-                best = i;
-                bestLeft = left;
-            }
-        }
-        return best;
-    }
-
     /** 칩 배열에서 선택된 칩의 번호 찾기 */
     private int selectedIndex(Chip[] chips) {
         for (int i = 0; i < chips.length; i++) {
@@ -475,23 +453,21 @@ public class Main extends JFrame implements ActionListener {
     }
 
     /**
-     * 선택 칩 (JToggleButton 상속) - 선택되면 빨간색으로 채워짐, sub가 있으면 아래에 작은 글자
+     * 선택 칩 (JToggleButton 상속) - 선택되면 줄 색으로 채워짐
      */
     static class Chip extends JToggleButton {
         private String title;
-        private String sub;              // 아래 작은 글자 (예: 날짜), 없으면 null
         private Color color = ACCENT;    // 선택됐을 때 색 (줄마다 다름)
 
-        Chip(String title, String sub) {
+        Chip(String title) {
             this.title = title;
-            this.sub = sub;
             setContentAreaFilled(false);
             setBorderPainted(false);
             setFocusPainted(false);
             setBorder(new EmptyBorder(0, 8, 0, 8));   // 기본 버튼 여백 대신 좁은 여백 (글자가 잘리지 않게)
             setCursor(new Cursor(Cursor.HAND_CURSOR));
             updateLook();
-            setPreferredSize(new Dimension(getPreferredSize().width + 8, sub == null ? 34 : 44));
+            setPreferredSize(new Dimension(getPreferredSize().width + 8, 34));
             addItemListener(e -> updateLook());   // 선택 상태가 바뀔 때마다 모양 갱신
         }
 
@@ -514,13 +490,7 @@ public class Main extends JFrame implements ActionListener {
             boolean on = isSelected();
             setForeground(on ? Color.WHITE : TEXT);
             setFont(new Font(FONT, on ? Font.BOLD : Font.PLAIN, 13));
-            if (sub == null) {
-                setText(title);
-            } else {   // html로 두 줄 만들기 (윗줄: 이름, 아랫줄: 작은 날짜)
-                String subColor = on ? "#FFFFFF" : "#A3A3AA";
-                setText("<html><center>" + title + "<br><span style='font-size:9px; font-weight:normal; color:"
-                        + subColor + "'>" + sub + "</span></center></html>");
-            }
+            setText(title);
         }
 
         @Override

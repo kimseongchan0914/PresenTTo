@@ -3,7 +3,7 @@
  *
  * [다형성] 부모 타입(Anniversary) 배열 하나에 서로 다른 자식 객체들을 담습니다.
  *         getMessage()를 호출하면 각 객체에 맞는 문구가 자동으로 나옵니다.
- * [상속] 날짜가 정해진 기념일은 Anniversary를, 날짜가 사람마다 다른 기념일은 FlexibleAnniversary를 상속합니다.
+ * [상속] 모든 기념일 클래스는 추상 클래스 Anniversary를 상속하고 getMessage()를 오버라이딩합니다.
  */
 public class Anniversaries {
 
@@ -27,12 +27,11 @@ public class Anniversaries {
     }
 }
 
-/* ===== 날짜가 사람마다 다른 기념일 (FlexibleAnniversary 상속) ===== */
 
 /** 생일 */
-class Birthday extends FlexibleAnniversary {
+class Birthday extends Anniversary {
     public Birthday() {
-        super("생일", "사람마다 달라요");
+        super("생일");
     }
 
     @Override
@@ -42,9 +41,9 @@ class Birthday extends FlexibleAnniversary {
 }
 
 /** 커플 100일 */
-class Couple100Days extends FlexibleAnniversary {
+class Couple100Days extends Anniversary {
     public Couple100Days() {
-        super("커플 100일", "사귄 날 +100일");
+        super("커플 100일");
     }
 
     @Override
@@ -54,9 +53,9 @@ class Couple100Days extends FlexibleAnniversary {
 }
 
 /** 커플 1주년 */
-class CoupleAnniversary extends FlexibleAnniversary {
+class CoupleAnniversary extends Anniversary {
     public CoupleAnniversary() {
-        super("커플 1주년", "사귄 날 +1년");
+        super("커플 1주년");
     }
 
     @Override
@@ -66,9 +65,9 @@ class CoupleAnniversary extends FlexibleAnniversary {
 }
 
 /** 졸업·입학 */
-class Graduation extends FlexibleAnniversary {
+class Graduation extends Anniversary {
     public Graduation() {
-        super("졸업·입학", "학교마다 달라요");
+        super("졸업·입학");
     }
 
     @Override
@@ -78,9 +77,9 @@ class Graduation extends FlexibleAnniversary {
 }
 
 /** 승진·이직 */
-class Promotion extends FlexibleAnniversary {
+class Promotion extends Anniversary {
     public Promotion() {
-        super("승진·이직", "축하할 일 생기면");
+        super("승진·이직");
     }
 
     @Override
@@ -89,10 +88,10 @@ class Promotion extends FlexibleAnniversary {
     }
 }
 
-/** 설날 (음력이라 해마다 날짜가 바뀜) */
-class LunarNewYear extends FlexibleAnniversary {
+/** 설날 */
+class LunarNewYear extends Anniversary {
     public LunarNewYear() {
-        super("설날", "음력 1월 1일");
+        super("설날");
     }
 
     @Override
@@ -101,10 +100,10 @@ class LunarNewYear extends FlexibleAnniversary {
     }
 }
 
-/** 수능 응원 (해마다 날짜가 바뀜) */
-class ExamDay extends FlexibleAnniversary {
+/** 수능 응원 */
+class ExamDay extends Anniversary {
     public ExamDay() {
-        super("수능 응원", "11월 셋째 주 목");
+        super("수능 응원");
     }
 
     @Override
@@ -113,12 +112,11 @@ class ExamDay extends FlexibleAnniversary {
     }
 }
 
-/* ===== 날짜가 정해진 기념일 (Anniversary 상속) ===== */
 
 /** 발렌타인데이 */
 class ValentinesDay extends Anniversary {
     public ValentinesDay() {
-        super("발렌타인데이", 2, 14);
+        super("발렌타인데이");
     }
 
     @Override
@@ -130,7 +128,7 @@ class ValentinesDay extends Anniversary {
 /** 화이트데이 */
 class WhiteDay extends Anniversary {
     public WhiteDay() {
-        super("화이트데이", 3, 14);
+        super("화이트데이");
     }
 
     @Override
@@ -142,7 +140,7 @@ class WhiteDay extends Anniversary {
 /** 어린이날 */
 class ChildrensDay extends Anniversary {
     public ChildrensDay() {
-        super("어린이날", 5, 5);
+        super("어린이날");
     }
 
     @Override
@@ -154,7 +152,7 @@ class ChildrensDay extends Anniversary {
 /** 어버이날 */
 class ParentsDay extends Anniversary {
     public ParentsDay() {
-        super("어버이날", 5, 8);
+        super("어버이날");
     }
 
     @Override
@@ -166,7 +164,7 @@ class ParentsDay extends Anniversary {
 /** 스승의날 */
 class TeachersDay extends Anniversary {
     public TeachersDay() {
-        super("스승의날", 5, 15);
+        super("스승의날");
     }
 
     @Override
@@ -178,7 +176,7 @@ class TeachersDay extends Anniversary {
 /** 빼빼로데이 */
 class PeperoDay extends Anniversary {
     public PeperoDay() {
-        super("빼빼로데이", 11, 11);
+        super("빼빼로데이");
     }
 
     @Override
@@ -190,7 +188,7 @@ class PeperoDay extends Anniversary {
 /** 크리스마스 */
 class Christmas extends Anniversary {
     public Christmas() {
-        super("크리스마스", 12, 25);
+        super("크리스마스");
     }
 
     @Override
