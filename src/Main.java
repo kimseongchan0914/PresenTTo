@@ -151,29 +151,35 @@ public class Main extends JFrame implements ActionListener {
             color = GRAY;
             tagText = "이런 것도 있어요";
         }
-        Color light = mix(Color.WHITE, color, 0.18);   // 그림 배경은 같은 색을 연하게
-        String colorCode = String.format("#%06X", color.getRGB() & 0xFFFFFF);   // Color → "#3480F0" (HTML 글자색용)
+        Color light = new Color(color.getRed(), color.getGreen(), color.getBlue(), 45);   // 같은 색을 투명하게 (45 / 255)
 
         // ----- 위: 그림 영역 (태그 + 선물 그림) -----
-        JLabel tag = new JLabel("<html><span style='background:" + colorCode + "'>&nbsp;" + tagText + "&nbsp;</span></html>");
+        JLabel tag = new JLabel(tagText);
         tag.setFont(new Font(FONT, Font.BOLD, 11));
         tag.setForeground(Color.WHITE);
+        tag.setOpaque(true);                          // 배경색을 칠하려면 true
+        tag.setBackground(color);
+        tag.setBorder(new EmptyBorder(3, 6, 3, 6));   // 글자 둘레 여백
+        JPanel tagLine = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));   // 태그가 글자 크기만큼만 차지하게
+        tagLine.setOpaque(false);
+        tagLine.add(tag);
 
         RoundPanel picture = new RoundPanel(light, 12, false);
         picture.setLayout(new BorderLayout());
         picture.setBorder(new EmptyBorder(8, 8, 8, 8));
-        picture.add(tag, BorderLayout.NORTH);
+        picture.add(tagLine, BorderLayout.NORTH);
         picture.add(new EmojiPicture(gift.getEmoji(), 64), BorderLayout.CENTER);
 
-        // ----- 아래: 이름 + 추천 이유 + 설명 (카드가 좁아서 너비를 정해 길면 줄바꿈) -----
-        JLabel text = new JLabel("<html><div style='width:125px; line-height:1.45'>"
-                + "<font size='+1' color='#222226'><b>" + gift.getName() + "</b></font><br>"
-                + "<font color='" + colorCode + "'><b>" + gift.getReason(occasion, target) + "</b></font><br>"
-                + gift.getDescription() + "</div></html>");
-        text.setFont(new Font(FONT, Font.PLAIN, 12));
-        text.setForeground(GRAY);
-        text.setVerticalAlignment(SwingConstants.TOP);
-        text.setPreferredSize(new Dimension(0, 100));   // 글 길이와 상관없이 카드 모양을 똑같게
+        // ----- 아래: 이름 + 추천 이유 + 설명 (길면 자동 줄바꿈) -----
+        JPanel text = new JPanel(new BorderLayout(0, 4));
+        text.setOpaque(false);
+        text.add(makeText(gift.getName(), Font.BOLD, 16, TEXT), BorderLayout.NORTH);
+        text.add(makeText(gift.getReason(occasion, target), Font.BOLD, 12, color), BorderLayout.CENTER);
+        text.add(makeText(gift.getDescription(), Font.PLAIN, 12, GRAY), BorderLayout.SOUTH);
+        JPanel textBox = new JPanel(new BorderLayout());
+        textBox.setOpaque(false);
+        textBox.add(text, BorderLayout.NORTH);              // 글은 위쪽부터
+        textBox.setPreferredSize(new Dimension(0, 104));    // 글 길이와 상관없이 카드 모양을 똑같게
 
         // 다형성: 종류마다 가격 글자가 다름 ("0원 (정성 100%)", "9,500원 (바로 전송)")
         JLabel price = new JLabel(gift.getPriceText());
@@ -185,7 +191,7 @@ public class Main extends JFrame implements ActionListener {
         JPanel info = new JPanel(new BorderLayout(0, 8));
         info.setOpaque(false);
         info.setBorder(new EmptyBorder(0, 6, 0, 6));
-        info.add(text, BorderLayout.CENTER);
+        info.add(textBox, BorderLayout.CENTER);
         info.add(price, BorderLayout.SOUTH);
 
         RoundPanel card = new RoundPanel(Color.WHITE, 16, true);
@@ -244,17 +250,22 @@ public class Main extends JFrame implements ActionListener {
         return 0;
     }
 
-    /** 두 색을 섞기 (t = 0이면 a, 1이면 b) */
-    static Color mix(Color a, Color b, double t) {
-        return new Color(
-                (int) (a.getRed() + (b.getRed() - a.getRed()) * t),
-                (int) (a.getGreen() + (b.getGreen() - a.getGreen()) * t),
-                (int) (a.getBlue() + (b.getBlue() - a.getBlue()) * t));
+    /** 길면 자동으로 줄바꿈되는 글자 만들기 (JLabel은 줄바꿈이 안 돼서 JTextArea 사용) */
+    private JTextArea makeText(String content, int style, int size, Color color) {
+        JTextArea area = new JTextArea(content);
+        area.setFont(new Font(FONT, style, size));
+        area.setForeground(color);
+        area.setLineWrap(true);      // 칸이 좁으면 다음 줄로
+        area.setEditable(false);     // 글자를 고칠 수 없게
+        area.setFocusable(false);
+        area.setOpaque(false);       // 배경은 투명하게
+        return area;
     }
 
     /** 프로그램 시작점 */
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new Main().setVisible(true));
+        Main window = new Main();
+        window.setVisible(true);
     }
 
     // ==================== 화면 꾸미기용 부품 클래스 ====================
@@ -302,7 +313,11 @@ public class Main extends JFrame implements ActionListener {
         protected void paintComponent(Graphics g) {
             Graphics2D g2 = (Graphics2D) g;
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(getModel().isRollover() ? mix(ACCENT, Color.BLACK, 0.12) : ACCENT);
+            if (getModel().isRollover()) {   // 마우스를 올렸으면
+                g2.setColor(ACCENT.darker());   // 조금 진한 색
+            } else {
+                g2.setColor(ACCENT);
+            }
             g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, RADIUS, RADIUS);
             super.paintComponent(g);   // 글자는 원래대로 그림
         }
@@ -322,14 +337,19 @@ public class Main extends JFrame implements ActionListener {
             setContentAreaFilled(false);   // 기본 버튼 모양은 끄고 직접 그림
             setBorderPainted(false);
             setFocusPainted(false);
-            addItemListener(e -> setForeground(isSelected() ? Color.WHITE : TEXT));   // 선택이 바뀌면 글자색 변경
         }
 
         @Override
         protected void paintComponent(Graphics g) {
             Graphics2D g2 = (Graphics2D) g;
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(isSelected() ? color : CHIP_OFF);
+            if (isSelected()) {   // 선택됨: 줄 색 배경 + 흰 글자
+                g2.setColor(color);
+                setForeground(Color.WHITE);
+            } else {              // 선택 안 됨: 연한 회색 배경 + 검은 글자
+                g2.setColor(CHIP_OFF);
+                setForeground(TEXT);
+            }
             g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, RADIUS, RADIUS);
             super.paintComponent(g);   // 글자는 원래대로 그림
         }
