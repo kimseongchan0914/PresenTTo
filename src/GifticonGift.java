@@ -15,7 +15,7 @@ public class GifticonGift extends Gift {
 
     @Override
     public String getPriceText() {
-        return super.getPriceText() + " · 바로 전송";   // 부모의 "9500원" 뒤에 글자를 덧붙임
+        return super.getPriceText() + " (바로 전송)";   // 부모의 "9,500원" 뒤에 글자를 덧붙임
     }
 
     @Override
@@ -26,10 +26,5 @@ public class GifticonGift extends Gift {
     @Override
     public Color getColor() {
         return Main.BLUE;
-    }
-
-    @Override
-    public Color getLightColor() {
-        return Main.BLUE_LIGHT;
     }
 }

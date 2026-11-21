@@ -67,15 +67,11 @@ public class Gift {
         return "일반 선물";
     }
 
-    /** 카드 진한 색 (태그 글자 / 가격 / 아이콘) */
+    /** 카드 색 (태그 / 추천 이유 / 가격 / 그림 배경) */
     public Color getColor() {
         return Main.ACCENT;
     }
 
-    /** 카드 연한 색 (태그 배경) */
-    public Color getLightColor() {
-        return Main.ACCENT_LIGHT;
-    }
 
     public String getEmoji() {
         return emoji;

@@ -23,9 +23,4 @@ public class ExperienceGift extends Gift {
     public Color getColor() {
         return Main.PURPLE;
     }
-
-    @Override
-    public Color getLightColor() {
-        return Main.PURPLE_LIGHT;
-    }
 }

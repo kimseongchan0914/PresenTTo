@@ -27,9 +27,4 @@ public class HandmadeGift extends Gift {
     public Color getColor() {
         return Main.GREEN;
     }
-
-    @Override
-    public Color getLightColor() {
-        return Main.GREEN_LIGHT;
-    }
 }
