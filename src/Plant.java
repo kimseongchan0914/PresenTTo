@@ -42,7 +42,9 @@ public abstract class Plant {
 
     // 영양제: 모든 식물이 같음, 하루에 한 번만
     public boolean feed() {
-        if (fedToday) return false;
+        if (fedToday) {
+            return false;
+        }
         fedToday = true;
         setHealth(health + 10);
         return true;
@@ -63,8 +65,12 @@ public abstract class Plant {
 
     // 0~100을 벗어나지 않게 막아 주는 도우미
     private int limit(int value) {
-        if (value < 0) return 0;
-        if (value > 100) return 100;
+        if (value < 0) {
+            return 0;
+        }
+        if (value > 100) {
+            return 100;
+        }
         return value;
     }
 
@@ -84,7 +90,22 @@ public abstract class Plant {
     public void setWater(int water) { this.water = limit(water); }
     public void setSun(int sun) { this.sun = limit(sun); }
     public void setHealth(int health) { this.health = limit(health); }
-    public void setDay(int day) { if (day >= 1) this.day = day; }
-    public void setStage(int stage) { if (stage >= 0 && stage <= 3) this.stage = stage; }
-    public void setGoodDays(int goodDays) { if (goodDays >= 0 && goodDays <= 2) this.goodDays = goodDays; }
+
+    public void setDay(int day) {
+        if (day >= 1) {
+            this.day = day;
+        }
+    }
+
+    public void setStage(int stage) {
+        if (stage >= 0 && stage <= 3) {
+            this.stage = stage;
+        }
+    }
+
+    public void setGoodDays(int goodDays) {
+        if (goodDays >= 0 && goodDays <= 2) {
+            this.goodDays = goodDays;
+        }
+    }
 }

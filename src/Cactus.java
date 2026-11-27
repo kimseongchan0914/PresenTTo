@@ -21,7 +21,9 @@ public class Cactus extends Plant {
     @Override
     public void water() {
         super.water();
-        if (getWater() >= 60) setHealth(getHealth() - 10);
+        if (getWater() >= 60) {
+            setHealth(getHealth() - 10);
+        }
     }
 
     @Override
@@ -40,12 +42,24 @@ public class Cactus extends Plant {
 
     @Override
     public String getSpeech() {
-        if (getHealth() < 30) return "몸이 안 좋아요...";
-        if (getWater() >= 60) return "물 그만 줘...!";
-        if (getWater() < 10) return "물 아주 조금만...";
-        if (getSun() < 30) return "햇빛이 그리워...";
-        if (isFlower()) return "가시 사이로 꽃이 폈어!";
-        if (getHealth() >= 80) return "기분 최고!";
+        if (getHealth() < 30) {
+            return "몸이 안 좋아요...";
+        }
+        if (getWater() >= 60) {
+            return "물 그만 줘...!";
+        }
+        if (getWater() < 10) {
+            return "물 아주 조금만...";
+        }
+        if (getSun() < 30) {
+            return "햇빛이 그리워...";
+        }
+        if (isFlower()) {
+            return "가시 사이로 꽃이 폈어!";
+        }
+        if (getHealth() >= 80) {
+            return "기분 최고!";
+        }
         return "난 물 없이도 튼튼해~";
     }
 

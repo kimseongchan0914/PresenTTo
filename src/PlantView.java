@@ -38,7 +38,9 @@ public class PlantView extends JPanel {
         g.setColor(Color.WHITE);
         g.setFont(font(26));
         g.drawString("우리집 반려식물", 26, 48);
-        if (plant == null) return;
+        if (plant == null) {
+            return;
+        }
         g.setFont(font(16));
         String title = plant.getKind() + "  \"" + plant.getName() + "\"";
         g.drawString(title, w - 26 - g.getFontMetrics().stringWidth(title), 47);
@@ -48,7 +50,9 @@ public class PlantView extends JPanel {
         g.setColor(new Color(120, 100, 80));
         g.setFont(font(15));
         g.drawString(plant.getDay() + "일째  ·  " + plant.getStageName() + " 단계", 42, 122);
-        if (!plant.isFlower()) g.drawString("건강한 날 " + plant.getGoodDays() + " / 3", w - 150, 122);
+        if (!plant.isFlower()) {
+            g.drawString("건강한 날 " + plant.getGoodDays() + " / 3", w - 150, 122);
+        }
 
         int x = w / 2;
         int y = 390;   // 흙 높이
@@ -70,8 +74,12 @@ public class PlantView extends JPanel {
 
     // 건강할수록 초록, 아플수록 누런색
     private Color leafColor() {
-        if (plant.getHealth() >= 50) return new Color(76, 160, 80);
-        if (plant.getHealth() >= 25) return new Color(160, 170, 70);
+        if (plant.getHealth() >= 50) {
+            return new Color(76, 160, 80);
+        }
+        if (plant.getHealth() >= 25) {
+            return new Color(160, 170, 70);
+        }
         return new Color(190, 160, 80);
     }
 

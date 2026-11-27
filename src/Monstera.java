@@ -27,7 +27,9 @@ public class Monstera extends Plant {
     @Override
     public void sunbathe() {
         super.sunbathe();
-        if (getSun() >= 70) setHealth(getHealth() - 10);
+        if (getSun() >= 70) {
+            setHealth(getHealth() - 10);
+        }
     }
 
     @Override
@@ -44,12 +46,24 @@ public class Monstera extends Plant {
 
     @Override
     public String getSpeech() {
-        if (getHealth() < 30) return "몸이 안 좋아요...";
-        if (getSun() >= 70) return "앗 뜨거! 잎이 타요!";
-        if (getWater() < 40) return "목말라요!";
-        if (getSun() < 20) return "너무 어두워요...";
-        if (isFlower()) return "하얀 꽃이 폈어요!";
-        if (getHealth() >= 80) return "잎이 쑥쑥 커요!";
+        if (getHealth() < 30) {
+            return "몸이 안 좋아요...";
+        }
+        if (getSun() >= 70) {
+            return "앗 뜨거! 잎이 타요!";
+        }
+        if (getWater() < 40) {
+            return "목말라요!";
+        }
+        if (getSun() < 20) {
+            return "너무 어두워요...";
+        }
+        if (isFlower()) {
+            return "하얀 꽃이 폈어요!";
+        }
+        if (getHealth() >= 80) {
+            return "잎이 쑥쑥 커요!";
+        }
         return "촉촉해서 좋아~";
     }
 

@@ -39,12 +39,24 @@ public class Sunflower extends Plant {
 
     @Override
     public String getSpeech() {
-        if (getHealth() < 30) return "몸이 안 좋아요...";
-        if (getSun() < 30) return "해님... 해님이 필요해!";
-        if (getWater() < 30) return "목말라요!";
-        if (isFlower()) return "활짝 피었어요!";
-        if (getSun() >= 70) return "햇빛 좋다~";
-        if (getHealth() >= 80) return "기분 최고!";
+        if (getHealth() < 30) {
+            return "몸이 안 좋아요...";
+        }
+        if (getSun() < 30) {
+            return "해님... 해님이 필요해!";
+        }
+        if (getWater() < 30) {
+            return "목말라요!";
+        }
+        if (isFlower()) {
+            return "활짝 피었어요!";
+        }
+        if (getSun() >= 70) {
+            return "햇빛 좋다~";
+        }
+        if (getHealth() >= 80) {
+            return "기분 최고!";
+        }
         return "해님 쪽을 보고 있어요";
     }
 

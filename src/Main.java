@@ -60,11 +60,17 @@ public class Main extends JFrame implements ActionListener {
         int choice = JOptionPane.showOptionDialog(this, info, "식물 고르기",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, kinds, kinds[0]);
         String name = JOptionPane.showInputDialog(this, "이름을 지어 주세요");
-        if (name == null || name.trim().isEmpty()) name = "초록이";
+        if (name == null || name.trim().isEmpty()) {
+            name = "초록이";
+        }
 
-        if (choice == 1) plant = new Monstera(name.trim());
-        else if (choice == 2) plant = new Sunflower(name.trim());
-        else plant = new Cactus(name.trim());   // 창을 닫아도 선인장
+        if (choice == 1) {
+            plant = new Monstera(name.trim());
+        } else if (choice == 2) {
+            plant = new Sunflower(name.trim());
+        } else {
+            plant = new Cactus(name.trim());   // 창을 닫아도 선인장
+        }
         view.setPlant(plant);
         SaveManager.save(plant);
     }
@@ -73,10 +79,15 @@ public class Main extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         int oldStage = plant.getStage();
-        if (e.getSource() == waterButton) plant.water();
-        else if (e.getSource() == sunButton) plant.sunbathe();
-        else if (e.getSource() == dayButton) plant.nextDay();
-        else if (!plant.feed()) JOptionPane.showMessageDialog(this, "영양제는 하루에 한 번만 줄 수 있어요.");
+        if (e.getSource() == waterButton) {
+            plant.water();
+        } else if (e.getSource() == sunButton) {
+            plant.sunbathe();
+        } else if (e.getSource() == dayButton) {
+            plant.nextDay();
+        } else if (!plant.feed()) {
+            JOptionPane.showMessageDialog(this, "영양제는 하루에 한 번만 줄 수 있어요.");
+        }
         view.repaint();
         SaveManager.save(plant);
 

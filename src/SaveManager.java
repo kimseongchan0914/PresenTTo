@@ -33,9 +33,13 @@ public class SaveManager {
             in.close();
 
             Plant p;
-            if ("몬스테라".equals(kind)) p = new Monstera(name);
-            else if ("해바라기".equals(kind)) p = new Sunflower(name);
-            else p = new Cactus(name);
+            if ("몬스테라".equals(kind)) {
+                p = new Monstera(name);
+            } else if ("해바라기".equals(kind)) {
+                p = new Sunflower(name);
+            } else {
+                p = new Cactus(name);
+            }
             p.setWater(Integer.parseInt(v[0]));
             p.setSun(Integer.parseInt(v[1]));
             p.setHealth(Integer.parseInt(v[2]));

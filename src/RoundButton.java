@@ -26,8 +26,11 @@ public class RoundButton extends JButton {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g.setColor(getParent().getBackground());   // 모서리 바깥은 배경색
         g.fillRect(0, 0, getWidth(), getHeight());
-        if (getModel().isRollover()) g.setColor(color.darker());
-        else g.setColor(color);
+        if (getModel().isRollover()) {
+            g.setColor(color.darker());
+        } else {
+            g.setColor(color);
+        }
         g.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
 
         g.setColor(Color.WHITE);   // 글자를 가운데에
