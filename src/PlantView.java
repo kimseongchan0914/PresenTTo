@@ -20,6 +20,7 @@ public class PlantView extends JPanel {
         return new Font("Apple SD Gothic Neo", Font.BOLD, size);
     }
 
+    @Override
     protected void paintComponent(Graphics g0) {
         super.paintComponent(g0);
         Graphics2D g = (Graphics2D) g0;

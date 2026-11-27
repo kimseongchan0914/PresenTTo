@@ -16,6 +16,7 @@ public class RoundButton extends JButton {
     }
 
     // 버튼 모양을 직접 그림 (오버라이딩)
+    @Override
     protected void paintComponent(Graphics g0) {
         Graphics2D g = (Graphics2D) g0;
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

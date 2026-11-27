@@ -64,6 +64,7 @@ public class Main extends JFrame implements ActionListener {
     }
 
     // 버튼을 누르면 실행됨 (ActionListener의 메소드)
+    @Override
     public void actionPerformed(ActionEvent e) {
         int oldStage = plant.getStage();
         if (e.getSource() == waterButton) plant.water();

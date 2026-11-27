@@ -7,15 +7,18 @@ public class Sunflower extends Plant {
         super(name);
     }
 
+    @Override
     public String getKind() {
         return "해바라기";
     }
 
     // 햇빛을 좋아해서 한 번에 많이 받음
+    @Override
     public void sunbathe() {
         setSun(getSun() + 30);
     }
 
+    @Override
     public void nextDay() {
         setWater(getWater() - 15);
         setSun(getSun() - 20);       // 햇빛을 많이 씀
@@ -29,6 +32,7 @@ public class Sunflower extends Plant {
         endDay();
     }
 
+    @Override
     public String getSpeech() {
         if (getHealth() < 30) return "몸이 안 좋아요...";
         if (getSun() < 30) return "해님... 해님이 필요해!";
@@ -40,6 +44,7 @@ public class Sunflower extends Plant {
     }
 
     // 긴 줄기 + 잎, 줄기 단계에 꽃봉오리, 꽃 단계에 노란 꽃
+    @Override
     public void draw(Graphics2D g, int x, int y, Color leaf) {
         int h = 45 * getStage();   // 키: 45, 90, 135
         g.setColor(leaf.darker());

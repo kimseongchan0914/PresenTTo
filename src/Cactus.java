@@ -7,16 +7,19 @@ public class Cactus extends Plant {
         super(name);
     }
 
+    @Override
     public String getKind() {
         return "선인장";
     }
 
     // 물을 너무 많이 주면(60 이상) 오히려 건강이 떨어짐
+    @Override
     public void water() {
         super.water();
         if (getWater() >= 60) setHealth(getHealth() - 10);
     }
 
+    @Override
     public void nextDay() {
         setWater(getWater() - 5);    // 물이 천천히 줄어듦
         setSun(getSun() - 15);
@@ -30,6 +33,7 @@ public class Cactus extends Plant {
         endDay();
     }
 
+    @Override
     public String getSpeech() {
         if (getHealth() < 30) return "몸이 안 좋아요...";
         if (getWater() >= 60) return "물 그만 줘...!";
@@ -41,6 +45,7 @@ public class Cactus extends Plant {
     }
 
     // 둥근 몸통 + 가시, 줄기 단계부터 팔, 꽃 단계에 분홍 꽃
+    @Override
     public void draw(Graphics2D g, int x, int y, Color leaf) {
         int h = 40 * getStage();        // 키: 40, 80, 120
         int w = 34 + 8 * getStage();    // 굵기: 42, 50, 58

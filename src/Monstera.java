@@ -7,21 +7,25 @@ public class Monstera extends Plant {
         super(name);
     }
 
+    @Override
     public String getKind() {
         return "몬스테라";
     }
 
     // 물을 좋아해서 한 번에 많이 마심
+    @Override
     public void water() {
         setWater(getWater() + 30);
     }
 
     // 햇빛이 70 이상이면 잎이 타서 건강이 떨어짐
+    @Override
     public void sunbathe() {
         super.sunbathe();
         if (getSun() >= 70) setHealth(getHealth() - 10);
     }
 
+    @Override
     public void nextDay() {
         setWater(getWater() - 20);   // 물을 빨리 마심
         setSun(getSun() - 10);
@@ -33,6 +37,7 @@ public class Monstera extends Plant {
         endDay();
     }
 
+    @Override
     public String getSpeech() {
         if (getHealth() < 30) return "몸이 안 좋아요...";
         if (getSun() >= 70) return "앗 뜨거! 잎이 타요!";
@@ -44,6 +49,7 @@ public class Monstera extends Plant {
     }
 
     // 줄기 끝마다 갈라진 큰 잎, 꽃 단계에 하얀 꽃
+    @Override
     public void draw(Graphics2D g, int x, int y, Color leaf) {
         int[] lx = {-54, 56, -6};      // 잎 위치
         int[] ly = {-66, -88, -124};
