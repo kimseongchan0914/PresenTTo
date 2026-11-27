@@ -1,4 +1,4 @@
-import javax.swing.JPanel;
+import javax.swing.*;
 import java.awt.*;
 
 // 제목 띠, 식물 그림, 말풍선, 상태 게이지를 그리는 패널
@@ -32,28 +32,24 @@ public class PlantView extends JPanel {
         g.setColor(Color.WHITE);
         g.setFont(font(26));
         g.drawString("우리집 반려식물", 26, 48);
-        if (plant == null) {
-            return;
-        }
+        if (plant == null) return;
         g.setFont(font(16));
         String title = plant.getKind() + "  \"" + plant.getName() + "\"";
         g.drawString(title, w - 26 - g.getFontMetrics().stringWidth(title), 47);
 
-        // 2. 식물 카드: 날짜, 단계, 화분, 식물, 말풍선
+        // 2. 식물 카드: 날짜와 단계, 화분, 식물, 말풍선
         drawCard(g, 20, 92, w - 40, 396);
         g.setColor(new Color(120, 100, 80));
         g.setFont(font(15));
         g.drawString(plant.getDay() + "일째  ·  " + plant.getStageName() + " 단계", 42, 122);
-        if (!plant.isFlower()) {
-            String good = "건강한 날 " + plant.getGoodDays() + " / 3";
-            g.drawString(good, w - 42 - g.getFontMetrics().stringWidth(good), 122);
-        }
+        if (!plant.isFlower()) g.drawString("건강한 날 " + plant.getGoodDays() + " / 3", w - 150, 122);
 
         int x = w / 2;
         int y = 390;   // 흙 높이
         drawPot(g, x, y);
         if (plant.getStage() == 0) {
-            drawSeed(g, x, y);
+            g.setColor(new Color(160, 115, 65));   // 씨앗
+            g.fillOval(x - 12, y - 14, 24, 16);
         } else {
             plant.draw(g, x, y, leafColor());   // 다형성: 종류에 맞게 그려짐
         }
@@ -68,11 +64,8 @@ public class PlantView extends JPanel {
 
     // 건강할수록 초록, 아플수록 누런색
     private Color leafColor() {
-        if (plant.getHealth() >= 50) {
-            return new Color(76, 160, 80);
-        } else if (plant.getHealth() >= 25) {
-            return new Color(160, 170, 70);
-        }
+        if (plant.getHealth() >= 50) return new Color(76, 160, 80);
+        if (plant.getHealth() >= 25) return new Color(160, 170, 70);
         return new Color(190, 160, 80);
     }
 
@@ -96,26 +89,17 @@ public class PlantView extends JPanel {
         g.fillOval(x - 64, y - 8, 128, 14);
     }
 
-    // 씨앗 단계: 흙 위의 작은 씨앗
-    private void drawSeed(Graphics2D g, int x, int y) {
-        g.setColor(new Color(160, 115, 65));
-        g.fillOval(x - 12, y - 14, 24, 16);
-        g.setColor(new Color(120, 80, 45));
-        g.fillOval(x - 3, y - 11, 6, 10);
-    }
-
     // 꼬리가 달린 말풍선
     private void drawBubble(Graphics2D g, String text, int x, int y) {
         g.setFont(font(17));
         int bw = g.getFontMetrics().stringWidth(text) + 44;
-        int left = x - bw / 2;
         g.setColor(new Color(232, 245, 233));
-        g.fillRoundRect(left, y, bw, 46, 46, 46);
+        g.fillRoundRect(x - bw / 2, y, bw, 46, 46, 46);
         int[] tx = {x - 10, x + 10, x};
         int[] ty = {y + 44, y + 44, y + 60};
         g.fillPolygon(tx, ty, 3);
         g.setColor(new Color(46, 125, 50));
-        g.drawString(text, left + 22, y + 30);
+        g.drawString(text, x - bw / 2 + 22, y + 30);
     }
 
     // 이름 + 둥근 게이지 바 + 숫자
@@ -124,7 +108,7 @@ public class PlantView extends JPanel {
         g.setFont(font(15));
         g.setColor(new Color(90, 80, 70));
         g.drawString(label, 44, y + 14);
-        g.drawString(String.valueOf(value), getWidth() - 78, y + 14);
+        g.drawString("" + value, getWidth() - 78, y + 14);
         g.setColor(new Color(238, 238, 238));
         g.fillRoundRect(96, y, barW, 18, 18, 18);
         g.setColor(color);

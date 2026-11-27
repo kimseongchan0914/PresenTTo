@@ -1,26 +1,17 @@
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 
 // plant.txt에 식물 상태를 저장하고 불러오는 클래스
 public class SaveManager {
     private static final String FILE_NAME = "plant.txt";
 
     // 한 줄에 값 하나씩 저장
-    public static void save(Plant plant) {
+    public static void save(Plant p) {
         try {
             PrintWriter out = new PrintWriter(new FileWriter(FILE_NAME));
-            out.println(plant.getKind());
-            out.println(plant.getName());
-            out.println(plant.getWater());
-            out.println(plant.getSun());
-            out.println(plant.getHealth());
-            out.println(plant.getDay());
-            out.println(plant.getStage());
-            out.println(plant.getGoodDays());
+            out.println(p.getKind());
+            out.println(p.getName());
+            out.println(p.getWater() + "," + p.getSun() + "," + p.getHealth() + ","
+                    + p.getDay() + "," + p.getStage() + "," + p.getGoodDays());
             out.close();
         } catch (IOException e) {
             System.out.println("저장 실패: " + e.getMessage());
@@ -33,25 +24,23 @@ public class SaveManager {
             BufferedReader in = new BufferedReader(new FileReader(FILE_NAME));
             String kind = in.readLine();
             String name = in.readLine();
-            Plant plant;
-            if ("몬스테라".equals(kind)) {
-                plant = new Monstera(name);
-            } else if ("해바라기".equals(kind)) {
-                plant = new Sunflower(name);
-            } else {
-                plant = new Cactus(name);
-            }
-            plant.setWater(Integer.parseInt(in.readLine()));
-            plant.setSun(Integer.parseInt(in.readLine()));
-            plant.setHealth(Integer.parseInt(in.readLine()));
-            plant.setDay(Integer.parseInt(in.readLine()));
-            plant.setStage(Integer.parseInt(in.readLine()));
-            plant.setGoodDays(Integer.parseInt(in.readLine()));
+            String[] v = in.readLine().split(",");   // 숫자 6개
             in.close();
-            return plant;
+
+            Plant p;
+            if ("몬스테라".equals(kind)) p = new Monstera(name);
+            else if ("해바라기".equals(kind)) p = new Sunflower(name);
+            else p = new Cactus(name);
+            p.setWater(Integer.parseInt(v[0]));
+            p.setSun(Integer.parseInt(v[1]));
+            p.setHealth(Integer.parseInt(v[2]));
+            p.setDay(Integer.parseInt(v[3]));
+            p.setStage(Integer.parseInt(v[4]));
+            p.setGoodDays(Integer.parseInt(v[5]));
+            return p;
         } catch (IOException e) {
             return null;   // 파일이 없음 (처음 실행)
-        } catch (NumberFormatException e) {
+        } catch (Exception e) {
             return null;   // 파일 내용이 깨짐
         }
     }

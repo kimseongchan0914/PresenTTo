@@ -1,6 +1,4 @@
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.*;
 
 // 해바라기: 햇빛을 제일 좋아하고, 햇빛이 부족하면(30 미만) 크게 아픔
 public class Sunflower extends Plant {
@@ -48,35 +46,26 @@ public class Sunflower extends Plant {
         g.setStroke(new BasicStroke(7, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         g.drawLine(x, y, x, y - h);
 
-        // 잎은 단계마다 한 쌍씩 늘어남
-        g.setColor(leaf);
+        g.setColor(leaf);   // 잎은 단계마다 한 쌍씩 늘어남
         for (int i = 1; i <= getStage(); i++) {
             int ly = y - i * 38 + 10;
             g.fillOval(x - 44, ly - 10, 40, 20);
             g.fillOval(x + 4, ly - 18, 40, 20);
         }
-
         if (getStage() == 2) {
             g.fillOval(x - 14, y - h - 22, 28, 28);   // 꽃봉오리
         }
 
         if (isFlower()) {
-            int fy = y - h;
-            g.setColor(new Color(255, 200, 30));
+            g.setColor(new Color(255, 200, 30));   // 꽃잎 12장을 빙 둘러 그림
             for (int i = 0; i < 12; i++) {
                 double angle = Math.PI * 2 * i / 12;
                 int px = x + (int) (Math.cos(angle) * 28);
-                int py = fy + (int) (Math.sin(angle) * 28);
+                int py = y - h + (int) (Math.sin(angle) * 28);
                 g.fillOval(px - 12, py - 12, 24, 24);
             }
             g.setColor(new Color(120, 75, 30));
-            g.fillOval(x - 22, fy - 22, 44, 44);
-            g.setColor(new Color(85, 50, 20));
-            for (int i = -1; i <= 1; i++) {
-                for (int j = -1; j <= 1; j++) {
-                    g.fillOval(x + i * 11 - 3, fy + j * 11 - 3, 6, 6);   // 씨앗 점
-                }
-            }
+            g.fillOval(x - 22, y - h - 22, 44, 44);
         }
     }
 }

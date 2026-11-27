@@ -1,6 +1,4 @@
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.*;
 
 // 몬스테라: 물을 좋아하고, 강한 햇빛(70 이상)은 싫어함
 public class Monstera extends Plant {
@@ -21,9 +19,7 @@ public class Monstera extends Plant {
     // 햇빛이 70 이상이면 잎이 타서 건강이 떨어짐
     public void sunbathe() {
         super.sunbathe();
-        if (getSun() >= 70) {
-            setHealth(getHealth() - 10);
-        }
+        if (getSun() >= 70) setHealth(getHealth() - 10);
     }
 
     public void nextDay() {
@@ -47,39 +43,33 @@ public class Monstera extends Plant {
         return "촉촉해서 좋아~";
     }
 
-    // 줄기 끝마다 구멍 뚫린 큰 잎, 꽃 단계에 하얀 꽃
+    // 줄기 끝마다 갈라진 큰 잎, 꽃 단계에 하얀 꽃
     public void draw(Graphics2D g, int x, int y, Color leaf) {
-        int[] lx;
-        int[] ly;
-        int size;
-        if (getStage() == 1) {
-            lx = new int[] {10};
-            ly = new int[] {-40};
+        int[] lx = {-54, 56, -6};      // 잎 위치
+        int[] ly = {-66, -88, -124};
+        int count = 3;
+        int size = 60 + 12 * getStage();   // 잎 크기: 84, 96
+        if (getStage() == 1) {   // 새싹은 작은 잎 하나
+            lx[0] = 10;
+            ly[0] = -40;
+            count = 1;
             size = 50;
-        } else {
-            lx = new int[] {-54, 56, -6};
-            ly = new int[] {-66, -88, -124};
-            size = 60 + 12 * getStage();   // 84, 96
         }
 
-        g.setColor(leaf.darker());
         g.setStroke(new BasicStroke(6, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-        for (int i = 0; i < lx.length; i++) {
-            g.drawLine(x, y, x + lx[i], y + ly[i]);
+        for (int i = 0; i < count; i++) {
+            g.setColor(leaf.darker());
+            g.drawLine(x, y, x + lx[i], y + ly[i]);   // 줄기
         }
-        for (int i = 0; i < lx.length; i++) {
+        for (int i = 0; i < count; i++) {
             drawLeaf(g, x + lx[i], y + ly[i], size, leaf);
         }
 
         if (isFlower()) {
             g.setColor(leaf.darker());
-            g.setStroke(new BasicStroke(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-            g.drawLine(x, y, x + 70, y - 150);              // 꽃대
-            g.setColor(new Color(255, 250, 235));
+            g.drawLine(x, y, x + 70, y - 150);               // 꽃대
+            g.setColor(new Color(245, 228, 190));
             g.fillOval(x + 52, y - 210, 40, 64);             // 하얀 꽃잎
-            g.setColor(new Color(200, 190, 160));
-            g.setStroke(new BasicStroke(2));
-            g.drawOval(x + 52, y - 210, 40, 64);
             g.setColor(new Color(240, 190, 60));
             g.fillRoundRect(x + 65, y - 198, 14, 40, 14, 14); // 노란 꽃술
         }
@@ -97,7 +87,6 @@ public class Monstera extends Plant {
             g.drawLine(cx - size / 2, cy + dy, cx - size / 5, cy + dy / 2);
             g.drawLine(cx + size / 2, cy + dy, cx + size / 5, cy + dy / 2);
         }
-        g.setColor(leaf.darker());
-        g.drawLine(cx, cy - h / 2 + 4, cx, cy + h / 2 - 4);   // 잎맥
+        g.setStroke(new BasicStroke(6, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
     }
 }
