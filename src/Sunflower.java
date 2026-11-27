@@ -79,12 +79,12 @@ public class Sunflower extends Plant {
         }
 
         if (isFlower()) {
-            g.setColor(new Color(255, 200, 30));   // 꽃잎 12장을 빙 둘러 그림
-            for (int i = 0; i < 12; i++) {
-                double angle = Math.PI * 2 * i / 12;
-                int px = x + (int) (Math.cos(angle) * 28);
-                int py = y - h + (int) (Math.sin(angle) * 28);
-                g.fillOval(px - 12, py - 12, 24, 24);
+            // 꽃잎 8장: 꽃 가운데에서 얼마나 떨어져 있는지 (오른쪽부터 시계 방향)
+            int[] px = {28, 20, 0, -20, -28, -20, 0, 20};
+            int[] py = {0, 20, 28, 20, 0, -20, -28, -20};
+            g.setColor(new Color(255, 200, 30));
+            for (int i = 0; i < px.length; i++) {
+                g.fillOval(x + px[i] - 13, y - h + py[i] - 13, 26, 26);
             }
             g.setColor(new Color(120, 75, 30));
             g.fillOval(x - 22, y - h - 22, 44, 44);
