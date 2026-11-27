@@ -31,3 +31,6 @@ bin/
 
 ### IntelliJ 개인 설정 ###
 .idea/workspace.xml
+
+### 실행 중 저장 파일 ###
+plant.txt
