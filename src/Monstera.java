@@ -1,6 +1,11 @@
 import java.awt.*;
 
-// 몬스테라: 물을 좋아하고, 강한 햇빛(70 이상)은 싫어함
+/**
+ * 몬스테라: 물을 좋아하고, 강한 햇빛(70 이상)은 싫어합니다.
+ *
+ * [상속] Plant를 상속(extends)해서 상태 변수와 getter / setter를 물려받습니다.
+ * [오버라이딩] 물은 한 번에 +30, 햇빛이 70 이상이면 잎이 타도록 바꿨습니다.
+ */
 public class Monstera extends Plant {
 
     public Monstera(String name) {

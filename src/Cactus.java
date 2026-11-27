@@ -1,6 +1,11 @@
 import java.awt.*;
 
-// 선인장: 물을 싫어하고, 물이 천천히 줄어듦
+/**
+ * 선인장: 물을 싫어하고, 물이 천천히 줄어듭니다.
+ *
+ * [상속] Plant를 상속(extends)해서 상태 변수와 getter / setter를 물려받습니다.
+ * [오버라이딩] 물을 많이 주면(60 이상) 건강이 떨어지도록 water()를 바꿨습니다.
+ */
 public class Cactus extends Plant {
 
     public Cactus(String name) {

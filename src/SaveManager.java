@@ -1,6 +1,11 @@
 import java.io.*;
 
-// plant.txt에 식물 상태를 저장하고 불러오는 클래스
+/**
+ * plant.txt에 식물 상태를 저장하고 불러오는 클래스
+ *
+ * [파일 입출력] PrintWriter로 쓰고, BufferedReader로 읽습니다.
+ * [예외 처리] 파일이 없거나 내용이 깨져도 프로그램이 멈추지 않게 try-catch로 잡습니다.
+ */
 public class SaveManager {
     private static final String FILE_NAME = "plant.txt";
 

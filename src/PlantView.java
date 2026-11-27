@@ -1,7 +1,12 @@
 import javax.swing.*;
 import java.awt.*;
 
-// 제목 띠, 식물 그림, 말풍선, 상태 게이지를 그리는 패널
+/**
+ * 제목 띠, 식물 그림, 말풍선, 상태 게이지를 그리는 패널
+ *
+ * [상속] JPanel을 상속하고 paintComponent()를 오버라이딩해서 직접 그립니다.
+ * [다형성] plant.draw()를 부르면 식물 종류에 맞는 그림이 그려집니다.
+ */
 public class PlantView extends JPanel {
     private Plant plant;
 

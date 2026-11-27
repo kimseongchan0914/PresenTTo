@@ -1,6 +1,11 @@
 import java.awt.*;
 
-// 해바라기: 햇빛을 제일 좋아하고, 햇빛이 부족하면(30 미만) 크게 아픔
+/**
+ * 해바라기: 햇빛을 제일 좋아하고, 햇빛이 부족하면(30 미만) 크게 아픕니다.
+ *
+ * [상속] Plant를 상속(extends)해서 상태 변수와 getter / setter를 물려받습니다.
+ * [오버라이딩] 햇빛은 한 번에 +30, 햇빛이 부족하면 건강 -25로 바꿨습니다.
+ */
 public class Sunflower extends Plant {
 
     public Sunflower(String name) {

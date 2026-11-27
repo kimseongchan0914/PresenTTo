@@ -1,7 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
 
-// 모서리가 둥근 버튼 (마우스를 올리면 색이 진해짐)
+/**
+ * 모서리가 둥근 버튼 (마우스를 올리면 색이 진해짐)
+ *
+ * [상속] JButton을 상속하고 paintComponent()를 오버라이딩해서 모양을 바꿨습니다.
+ */
 public class RoundButton extends JButton {
     private Color color;
 

@@ -1,6 +1,13 @@
 import java.awt.*;
 
-// 모든 식물의 부모 클래스 (추상 클래스라서 직접 new 할 수 없음)
+/**
+ * 모든 식물의 부모 클래스
+ *
+ * [추상 클래스] abstract라서 new Plant()는 할 수 없고, 자식 클래스로만 만듭니다.
+ * [캡슐화] 상태 변수는 모두 private이고 getter / setter로만 접근합니다.
+ *         setter 안에서 값이 0~100을 벗어나지 않게 막습니다.
+ * [다형성] getKind / nextDay / getSpeech / draw는 식물마다 다르게 만듭니다.
+ */
 public abstract class Plant {
     public static final String[] STAGES = {"씨앗", "새싹", "줄기", "꽃"};
 

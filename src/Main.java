@@ -2,7 +2,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-// 프로그램 창: JFrame을 상속하고, 버튼 클릭은 ActionListener로 처리
+/**
+ * 프로그램 창과 버튼 처리
+ *
+ * [상속] JFrame을 상속해서 창이 됩니다.
+ * [인터페이스] ActionListener를 구현(implements)해서 버튼 클릭을 처리합니다.
+ * [다형성] Plant 변수 하나로 선인장 / 몬스테라 / 해바라기를 똑같이 다룹니다.
+ */
 public class Main extends JFrame implements ActionListener {
     public static final Color CREAM = new Color(255, 248, 231);
 
