@@ -15,8 +15,12 @@ public class SaveManager {
             PrintWriter out = new PrintWriter(new FileWriter(FILE_NAME));
             out.println(p.getKind());
             out.println(p.getName());
-            out.println(p.getWater() + "," + p.getSun() + "," + p.getHealth() + ","
-                    + p.getDay() + "," + p.getStage() + "," + p.getGoodDays());
+            out.println(p.getWater());
+            out.println(p.getSun());
+            out.println(p.getHealth());
+            out.println(p.getDay());
+            out.println(p.getStage());
+            out.println(p.getGoodDays());
             out.close();
         } catch (IOException e) {
             System.out.println("저장 실패: " + e.getMessage());
@@ -29,9 +33,6 @@ public class SaveManager {
             BufferedReader in = new BufferedReader(new FileReader(FILE_NAME));
             String kind = in.readLine();
             String name = in.readLine();
-            String[] v = in.readLine().split(",");   // 숫자 6개
-            in.close();
-
             Plant p;
             if ("몬스테라".equals(kind)) {
                 p = new Monstera(name);
@@ -40,17 +41,18 @@ public class SaveManager {
             } else {
                 p = new Cactus(name);
             }
-            p.setWater(Integer.parseInt(v[0]));
-            p.setSun(Integer.parseInt(v[1]));
-            p.setHealth(Integer.parseInt(v[2]));
-            p.setDay(Integer.parseInt(v[3]));
-            p.setStage(Integer.parseInt(v[4]));
-            p.setGoodDays(Integer.parseInt(v[5]));
+            p.setWater(Integer.parseInt(in.readLine()));
+            p.setSun(Integer.parseInt(in.readLine()));
+            p.setHealth(Integer.parseInt(in.readLine()));
+            p.setDay(Integer.parseInt(in.readLine()));
+            p.setStage(Integer.parseInt(in.readLine()));
+            p.setGoodDays(Integer.parseInt(in.readLine()));
+            in.close();
             return p;
         } catch (IOException e) {
             return null;   // 파일이 없음 (처음 실행)
-        } catch (Exception e) {
-            return null;   // 파일 내용이 깨짐
+        } catch (NumberFormatException e) {
+            return null;   // 파일 내용이 깨져서 숫자로 못 바꿈
         }
     }
 
