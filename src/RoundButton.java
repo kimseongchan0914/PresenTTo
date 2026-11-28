@@ -7,36 +7,29 @@ import java.awt.*;
  * [상속] JButton을 상속하고 paintComponent()를 오버라이딩해서 모양을 바꿨습니다.
  */
 public class RoundButton extends JButton {
-    private Color color;
+
+    private Color color;   // 버튼 색
 
     public RoundButton(String text, Color color) {
         super(text);
         this.color = color;
-        setFont(PlantView.font(16));
+        setFont(new Font("Apple SD Gothic Neo", Font.BOLD, 16));
+        setForeground(Color.WHITE);
         setPreferredSize(new Dimension(118, 48));
-        setBorderPainted(false);
-        setRolloverEnabled(true);
-        setCursor(new Cursor(Cursor.HAND_CURSOR));
+        setContentAreaFilled(false);   // 원래 버튼 배경은 그리지 않기
+        setBorderPainted(false);       // 원래 버튼 테두리도 그리지 않기
+        setFocusPainted(false);
+        setRolloverEnabled(true);      // 마우스를 올린 걸 알아차리게 하기
     }
 
-    // 버튼 모양을 직접 그림 (오버라이딩)
     @Override
-    protected void paintComponent(Graphics g0) {
-        Graphics2D g = (Graphics2D) g0;
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setColor(getParent().getBackground());   // 모서리 바깥은 배경색
-        g.fillRect(0, 0, getWidth(), getHeight());
+    protected void paintComponent(Graphics g) {
         if (getModel().isRollover()) {
-            g.setColor(color.darker());
+            g.setColor(color.darker());   // 마우스를 올리면 진한 색
         } else {
             g.setColor(color);
         }
         g.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
-
-        g.setColor(Color.WHITE);   // 글자를 가운데에
-        g.setFont(getFont());
-        FontMetrics fm = g.getFontMetrics();
-        g.drawString(getText(), (getWidth() - fm.stringWidth(getText())) / 2,
-                (getHeight() + fm.getAscent() - fm.getDescent()) / 2);
+        super.paintComponent(g);          // 글자는 원래 버튼이 그려 줌
     }
 }

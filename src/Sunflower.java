@@ -3,8 +3,8 @@ import java.awt.*;
 /**
  * 해바라기: 햇빛을 제일 좋아하고, 햇빛이 부족하면(30 미만) 크게 아픕니다.
  *
- * [상속] Plant를 상속(extends)해서 상태 변수와 getter / setter를 물려받습니다.
- * [오버라이딩] 햇빛은 한 번에 +30, 햇빛이 부족하면 건강 -25로 바꿨습니다.
+ * [상속] Plant를 상속(extends)해서 변수와 getter / setter를 물려받습니다.
+ * [오버라이딩] sunbathe()를 바꿔서 햇빛을 한 번에 +30 받게 했습니다.
  */
 public class Sunflower extends Plant {
 
@@ -23,71 +23,59 @@ public class Sunflower extends Plant {
         setSun(getSun() + 30);
     }
 
+    // 하루가 지나면: 수분 -15, 햇빛 -20 (햇빛을 많이 씀)
     @Override
     public void nextDay() {
         setWater(getWater() - 15);
-        setSun(getSun() - 20);       // 햇빛을 많이 씀
+        setSun(getSun() - 20);
         if (getSun() < 30) {
-            setHealth(getHealth() - 25);   // 햇빛 부족은 크게 아픔
+            setHealth(getHealth() - 25);   // 햇빛이 부족하면 크게 아픔
         } else if (getWater() >= 30) {
             setHealth(getHealth() + 10);
         } else {
             setHealth(getHealth() - 10);
         }
-        endDay();
+        super.nextDay();
     }
 
     @Override
     public String getSpeech() {
-        if (getHealth() < 30) {
-            return "몸이 안 좋아요...";
-        }
         if (getSun() < 30) {
-            return "해님... 해님이 필요해!";
-        }
-        if (getWater() < 30) {
+            return "해님이 필요해요!";
+        } else if (getWater() < 30) {
             return "목말라요!";
-        }
-        if (isFlower()) {
-            return "활짝 피었어요!";
-        }
-        if (getSun() >= 70) {
+        } else if (getSun() >= 70) {
             return "햇빛 좋다~";
-        }
-        if (getHealth() >= 80) {
+        } else {
             return "기분 최고!";
         }
-        return "해님 쪽을 보고 있어요";
     }
 
     // 긴 줄기 + 잎, 줄기 단계에 꽃봉오리, 꽃 단계에 노란 꽃
     @Override
     public void draw(Graphics2D g, int x, int y, Color leaf) {
-        int h = 45 * getStage();   // 키: 45, 90, 135
+        int h = getStage() * 45;   // 키: 45, 90, 135
+
         g.setColor(leaf.darker());
-        g.setStroke(new BasicStroke(7, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-        g.drawLine(x, y, x, y - h);
+        g.fillRect(x - 3, y - h, 6, h);   // 줄기
 
-        g.setColor(leaf);   // 잎은 단계마다 한 쌍씩 늘어남
-        for (int i = 1; i <= getStage(); i++) {
-            int ly = y - i * 38 + 10;
-            g.fillOval(x - 44, ly - 10, 40, 20);
-            g.fillOval(x + 4, ly - 18, 40, 20);
+        g.setColor(leaf);
+        for (int i = 1; i <= getStage(); i++) {   // 잎이 단계마다 한 쌍씩
+            g.fillOval(x - 40, y - i * 38, 38, 18);
+            g.fillOval(x + 2, y - i * 38 - 8, 38, 18);
         }
+
         if (getStage() == 2) {
-            g.fillOval(x - 14, y - h - 22, 28, 28);   // 꽃봉오리
+            g.fillOval(x - 14, y - h - 20, 28, 28);   // 꽃봉오리
         }
 
-        if (isFlower()) {
-            // 꽃잎 8장: 꽃 가운데에서 얼마나 떨어져 있는지 (오른쪽부터 시계 방향)
-            int[] px = {28, 20, 0, -20, -28, -20, 0, 20};
-            int[] py = {0, 20, 28, 20, 0, -20, -28, -20};
-            g.setColor(new Color(255, 200, 30));
-            for (int i = 0; i < px.length; i++) {
-                g.fillOval(x + px[i] - 13, y - h + py[i] - 13, 26, 26);
-            }
-            g.setColor(new Color(120, 75, 30));
-            g.fillOval(x - 22, y - h - 22, 44, 44);
+        if (getStage() == 3) {
+            g.setColor(new Color(255, 200, 30));       // 노란 꽃잎
+            g.fillOval(x - 50, y - h - 15, 100, 30);
+            g.fillOval(x - 15, y - h - 50, 30, 100);
+            g.fillOval(x - 36, y - h - 36, 72, 72);
+            g.setColor(new Color(120, 75, 30));        // 갈색 가운데
+            g.fillOval(x - 20, y - h - 20, 40, 40);
         }
     }
 }

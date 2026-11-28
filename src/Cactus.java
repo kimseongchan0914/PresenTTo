@@ -3,8 +3,8 @@ import java.awt.*;
 /**
  * 선인장: 물을 싫어하고, 물이 천천히 줄어듭니다.
  *
- * [상속] Plant를 상속(extends)해서 상태 변수와 getter / setter를 물려받습니다.
- * [오버라이딩] 물을 많이 주면(60 이상) 건강이 떨어지도록 water()를 바꿨습니다.
+ * [상속] Plant를 상속(extends)해서 변수와 getter / setter를 물려받습니다.
+ * [오버라이딩] water()를 바꿔서 물을 많이 주면 건강이 떨어지게 했습니다.
  */
 public class Cactus extends Plant {
 
@@ -26,70 +26,55 @@ public class Cactus extends Plant {
         }
     }
 
+    // 하루가 지나면: 수분 -5 (천천히 줄어듦), 햇빛 -15
     @Override
     public void nextDay() {
-        setWater(getWater() - 5);    // 물이 천천히 줄어듦
+        setWater(getWater() - 5);
         setSun(getSun() - 15);
-        if (getWater() >= 60) {
-            setHealth(getHealth() - 15);   // 뿌리가 썩음
-        } else if (getWater() >= 10 && getSun() >= 30) {
+        if (getWater() >= 10 && getWater() < 60 && getSun() >= 30) {
             setHealth(getHealth() + 10);
         } else {
             setHealth(getHealth() - 10);
         }
-        endDay();
+        super.nextDay();
     }
 
     @Override
     public String getSpeech() {
-        if (getHealth() < 30) {
-            return "몸이 안 좋아요...";
-        }
         if (getWater() >= 60) {
             return "물 그만 줘...!";
-        }
-        if (getWater() < 10) {
-            return "물 아주 조금만...";
-        }
-        if (getSun() < 30) {
+        } else if (getSun() < 30) {
             return "햇빛이 그리워...";
-        }
-        if (isFlower()) {
-            return "가시 사이로 꽃이 폈어!";
-        }
-        if (getHealth() >= 80) {
+        } else if (getHealth() >= 80) {
             return "기분 최고!";
+        } else {
+            return "난 물 없이도 튼튼해~";
         }
-        return "난 물 없이도 튼튼해~";
     }
 
-    // 둥근 몸통 + 가시, 줄기 단계부터 팔, 꽃 단계에 분홍 꽃
+    // 둥근 몸통 + 하얀 가시, 줄기 단계부터 팔, 꽃 단계에 분홍 꽃
     @Override
     public void draw(Graphics2D g, int x, int y, Color leaf) {
-        int h = 40 * getStage();        // 키: 40, 80, 120
-        int w = 34 + 8 * getStage();    // 굵기: 42, 50, 58
+        int h = getStage() * 40;   // 키: 40, 80, 120
+
         g.setColor(leaf);
+        g.fillRoundRect(x - 25, y - h, 50, h + 5, 40, 40);   // 몸통
         if (getStage() >= 2) {
-            g.fillRoundRect(x - w / 2 - 26, y - h / 2, 34, 16, 16, 16);       // 왼팔
-            g.fillRoundRect(x - w / 2 - 26, y - h / 2 - 34, 16, 50, 16, 16);
-            g.fillRoundRect(x + w / 2 - 8, y - h / 2 - 16, 34, 16, 16, 16);   // 오른팔
-            g.fillRoundRect(x + w / 2 + 10, y - h / 2 - 46, 16, 46, 16, 16);
-        }
-        g.fillRoundRect(x - w / 2, y - h, w, h + 4, w, w);   // 몸통
-
-        g.setColor(new Color(255, 250, 220));   // 가시
-        g.setStroke(new BasicStroke(2));
-        for (int i = y - h + w / 2; i < y - 4; i += 16) {
-            g.drawLine(x - w / 2, i, x - w / 2 - 6, i - 4);
-            g.drawLine(x + w / 2, i, x + w / 2 + 6, i - 4);
-            g.drawLine(x, i + 6, x, i + 1);
+            g.fillRoundRect(x - 50, y - h + 25, 18, 40, 18, 18);   // 왼팔
+            g.fillRect(x - 40, y - h + 50, 20, 14);
+            g.fillRoundRect(x + 32, y - h + 15, 18, 40, 18, 18);   // 오른팔
+            g.fillRect(x + 20, y - h + 40, 20, 14);
         }
 
-        if (isFlower()) {
-            g.setColor(new Color(255, 105, 150));
-            g.fillOval(x - 18, y - h - 14, 36, 24);
-            g.setColor(new Color(255, 220, 90));
-            g.fillOval(x - 6, y - h - 8, 12, 12);
+        g.setColor(Color.WHITE);   // 가시
+        for (int i = 15; i < h; i = i + 20) {
+            g.fillOval(x - 15, y - i, 4, 4);
+            g.fillOval(x + 11, y - i, 4, 4);
+        }
+
+        if (getStage() == 3) {
+            g.setColor(new Color(255, 105, 150));   // 분홍 꽃
+            g.fillOval(x - 15, y - h - 12, 30, 20);
         }
     }
 }
